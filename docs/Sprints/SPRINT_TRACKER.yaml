@@ -27,7 +27,7 @@ phases:
     folder: "01_python_bleak"
     sprint_range: [1, 17]
     git_tag: "phase01-complete"
-    status: not_started
+    status: in_progress
 
   - id: phase_02
     name: "Swift / CoreBluetooth (Apple)"
@@ -70,8 +70,8 @@ sprints:
     test_file: "01_python_bleak/test_01_scan.py"
     branch: "feature/phase01-sprint01-passive-scan"
     depends_on: []
-    status: not_started
-    started_at: null
+    status: in_progress
+    started_at: "2026-03-20"
     completed_at: null
     acceptance_criteria:
       - "scan() returns list of BLEDevice"
