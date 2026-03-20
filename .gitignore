@@ -1,0 +1,53 @@
+# === Python ===
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv
+
+# === Swift / Xcode ===
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+.build/
+*.swiftpm/xcode/
+
+# === JavaScript / Node.js ===
+node_modules/
+package-lock.json
+yarn.lock
+
+# === Unity ===
+Library/
+Temp/
+Obj/
+Logs/
+UserSettings/
+*.csproj
+*.sln
+*.unitypackage
+
+# === C++ ===
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+*.dylib
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

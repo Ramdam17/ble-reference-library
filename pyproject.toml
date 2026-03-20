@@ -1,0 +1,18 @@
+[project]
+name = "ble-reference-library"
+version = "0.1.0"
+description = "Multi-platform BLE reference library — standalone, heavily commented modules for Python, Swift, JavaScript, Unity C#, and C++."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "bleak>=0.21",
+    "bitstring>=4.0",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+    "black>=24.0",
+]
