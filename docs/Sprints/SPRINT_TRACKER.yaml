@@ -86,8 +86,8 @@ sprints:
     test_file: "01_python_bleak/test_02_scan_filtered.py"
     branch: "feature/phase01-sprint02-filtered-scan"
     depends_on: [1]
-    status: not_started
-    started_at: null
+    status: in_progress
+    started_at: "2026-03-20"
     completed_at: null
     acceptance_criteria:
       - "scan_by_name is case-insensitive substring match"
