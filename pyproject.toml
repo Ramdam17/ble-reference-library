@@ -11,6 +11,9 @@ dependencies = [
     "matplotlib>=3.10.8",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",

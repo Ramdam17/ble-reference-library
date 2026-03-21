@@ -336,211 +336,211 @@ sprints:
   - id: 19
     phase: phase_02
     name: "Passive Scan"
-    file: "09_xcode_apple/Shared/01_BLEScan.swift"
+    file: "09_xcode_apple/Sources/BLEReference/01_BLEScan.swift"
     branch: "feature/phase02-sprint19-passive-scan"
     depends_on: []
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
     acceptance_criteria:
       - "scan deferred until CBCentralManager .poweredOn"
-      - "all 4 unit tests pass"
+      - "all 5 unit tests pass"
 
   - id: 20
     phase: phase_02
     name: "Filtered Scan"
-    file: "09_xcode_apple/Shared/02_BLEScanFiltered.swift"
+    file: "09_xcode_apple/Sources/BLEReference/02_BLEScanFiltered.swift"
     branch: "feature/phase02-sprint20-filtered-scan"
     depends_on: [19]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 4 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 8 unit tests pass"]
 
   - id: 21
     phase: phase_02
     name: "Connection Lifecycle"
-    file: "09_xcode_apple/Shared/03_BLEConnection.swift"
+    file: "09_xcode_apple/Sources/BLEReference/03_BLEConnection.swift"
     branch: "feature/phase02-sprint21-connection"
     depends_on: [19]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
     acceptance_criteria:
       - "_intentionalDisconnect flag prevents spurious reconnect"
-      - "all 6 unit tests pass"
+      - "all 7 unit tests pass"
 
   - id: 22
     phase: phase_02
     name: "Services & Characteristics Discovery"
-    file: "09_xcode_apple/Shared/04_BLEServicesDiscovery.swift"
+    file: "09_xcode_apple/Sources/BLEReference/04_BLEServicesDiscovery.swift"
     branch: "feature/phase02-sprint22-services-discovery"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["two-step discovery chain correct", "all 4 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["two-step discovery chain correct", "all 5 unit tests pass"]
 
   - id: 23
     phase: phase_02
     name: "Read & Write"
-    file: "09_xcode_apple/Shared/05_BLEReadWrite.swift"
+    file: "09_xcode_apple/Sources/BLEReference/05_BLEReadWrite.swift"
     branch: "feature/phase02-sprint23-read-write"
     depends_on: [22]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 6 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 2 unit tests pass"]
 
   - id: 24
     phase: phase_02
     name: "Notifications & Indications"
-    file: "09_xcode_apple/Shared/06_BLENotifications.swift"
+    file: "09_xcode_apple/Sources/BLEReference/06_BLENotifications.swift"
     branch: "feature/phase02-sprint24-notifications"
     depends_on: [23]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 5 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 1 unit tests pass"]
 
   - id: 25
     phase: phase_02
     name: "Scan Without Connection"
-    file: "09_xcode_apple/Shared/07_BLEScanNoConnect.swift"
+    file: "09_xcode_apple/Sources/BLEReference/07_BLEScanNoConnect.swift"
     branch: "feature/phase02-sprint25-adv-data"
     depends_on: [19]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 4 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 3 unit tests pass"]
 
   - id: 26
     phase: phase_02
     name: "Battery Level"
-    file: "09_xcode_apple/Shared/08_BLEBattery.swift"
+    file: "09_xcode_apple/Sources/BLEReference/08_BLEBattery.swift"
     branch: "feature/phase02-sprint26-battery"
     depends_on: [23]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["returns nil when Battery Service absent", "all 3 unit tests pass"]
-
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["returns nil when Battery Service absent", "all 2 unit tests pass"]
 
   - id: 27
     phase: phase_02
     name: "Device Information Service"
-    file: "09_xcode_apple/Shared/09_BLEDeviceInfo.swift"
+    file: "09_xcode_apple/Sources/BLEReference/09_BLEDeviceInfo.swift"
     branch: "feature/phase02-sprint27-device-info"
     depends_on: [22, 23]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
     notes: "Enables persistent device identification for multi-sensor setups on Apple platforms."
     acceptance_criteria:
       - "DeviceInfo struct with 5 optional string fields"
       - "returns nil when DIS absent"
-      - "all 5 unit tests pass"
+      - "all 6 unit tests pass"
+
   - id: 28
     phase: phase_02
     name: "Heart Rate Monitor Example"
-    file: "09_xcode_apple/Shared/09_BLEHeartRate.swift"
+    file: "09_xcode_apple/Sources/BLEReference/10_BLEHeartRate.swift"
     branch: "feature/phase02-sprint28-heartrate"
     depends_on: [24, 26]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 5 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 11 unit tests pass"]
 
   - id: 29
     phase: phase_02
     name: "Muse EEG Example"
-    file: "09_xcode_apple/Shared/10_MuseEEG.swift"
+    file: "09_xcode_apple/Sources/BLEReference/11_MuseEEG.swift"
     branch: "feature/phase02-sprint29-muse"
     depends_on: [24, 26]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
     notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria:
       - "Swift parser output matches Python reference for all test vectors"
-      - "all 6 unit tests pass"
+      - "all 5 unit tests pass"
 
   - id: 30
     phase: phase_02
     name: "Error Handling & Timeouts"
-    file: "09_xcode_apple/Shared/11_BLEErrors.swift"
+    file: "09_xcode_apple/Sources/BLEReference/12_BLEErrors.swift"
     branch: "feature/phase02-sprint30-errors"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 3 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 4 unit tests pass"]
 
   - id: 31
     phase: phase_02
     name: "MTU Negotiation"
-    file: "09_xcode_apple/Shared/12_BLEMTU.swift"
+    file: "09_xcode_apple/Sources/BLEReference/13_BLEMTU.swift"
     branch: "feature/phase02-sprint31-mtu"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
     acceptance_criteria: ["CoreBluetooth auto-negotiation documented", "all 2 unit tests pass"]
 
   - id: 32
     phase: phase_02
     name: "Bonding & Pairing"
-    file: "09_xcode_apple/Shared/13_BLEPairing.swift"
+    file: "09_xcode_apple/Sources/BLEReference/14_BLEPairing.swift"
     branch: "feature/phase02-sprint32-pairing"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["implicit pairing model documented", "all 2 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["implicit pairing model documented", "all 3 unit tests pass"]
 
   - id: 33
     phase: phase_02
     name: "Peripheral Mode"
-    file: "09_xcode_apple/Shared/14_BLEPeripheral.swift"
+    file: "09_xcode_apple/Sources/BLEReference/15_BLEPeripheral.swift"
     branch: "feature/phase02-sprint33-peripheral"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["platform config differences in iOS/macOS README", "all 4 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 2 unit tests pass"]
 
   - id: 34
     phase: phase_02
     name: "RSSI & Distance Estimation"
-    file: "09_xcode_apple/Shared/15_BLERSSIDistance.swift"
+    file: "09_xcode_apple/Sources/BLEReference/16_BLERSSIDistance.swift"
     branch: "feature/phase02-sprint34-rssi"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["formula matches Python reference", "all 3 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["formula matches Python reference", "all 6 unit tests pass"]
 
   - id: 35
     phase: phase_02
     name: "Command Queue"
-    file: "09_xcode_apple/Shared/16_BLECommandQueue.swift"
+    file: "09_xcode_apple/Sources/BLEReference/17_BLECommandQueue.swift"
     branch: "feature/phase02-sprint35-command-queue"
     depends_on: [23]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
     acceptance_criteria: ["serial execution verified", "all 3 unit tests pass"]
 
   - id: 36
     phase: phase_02
     name: "OTA / DFU"
-    file: "09_xcode_apple/Shared/17_BLEDFU.swift"
+    file: "09_xcode_apple/Sources/BLEReference/18_BLEDFU.swift"
     branch: "feature/phase02-sprint36-dfu"
     depends_on: [23, 30, 35]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["chunking matches Python reference", "all 4 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["chunking matches Python reference", "all 7 unit tests pass"]
 
   # ─────────────────────────────────────────────
   # PHASE 03 — JavaScript (Node.js + Web Bluetooth)
