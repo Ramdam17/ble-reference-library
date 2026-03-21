@@ -158,8 +158,8 @@ sprints:
     test_file: "01_python_bleak/test_07_scan_without_connect.py"
     branch: "feature/phase01-sprint07-scan-no-connect"
     depends_on: [2]
-    status: not_started
-    started_at: null
+    status: in_progress
+    started_at: "2026-03-20"
     completed_at: null
     acceptance_criteria:
       - "all 7 unit tests pass"
