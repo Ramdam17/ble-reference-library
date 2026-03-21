@@ -263,9 +263,9 @@ sprints:
     test_file: "01_python_bleak/test_14_bonding_pairing.py"
     branch: "feature/phase01-sprint14-bonding"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "per-platform behavior documented in docstring"
       - "all 3 unit tests pass"
