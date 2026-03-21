@@ -277,12 +277,12 @@ sprints:
     test_file: "01_python_bleak/test_15_peripheral_mode.py"
     branch: "feature/phase01-sprint15-peripheral"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
-      - "bless dependency documented in README"
-      - "all 3 unit tests pass"
+      - "bless incompatibility documented in module docstring"
+      - "all 9 unit tests pass"
 
   - id: 16
     phase: phase_01
@@ -291,12 +291,12 @@ sprints:
     test_file: "01_python_bleak/test_16_rssi_distance.py"
     branch: "feature/phase01-sprint16-rssi"
     depends_on: [1]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
-      - "formula documented as approximate (±50%)"
-      - "all 4 unit tests pass"
+      - "formula documented as approximate (±50–200%)"
+      - "all 13 unit tests pass"
 
   - id: 17
     phase: phase_01
@@ -305,13 +305,13 @@ sprints:
     test_file: "01_python_bleak/test_17_command_queue.py"
     branch: "feature/phase01-sprint17-command-queue"
     depends_on: [5]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "sequential execution verified"
       - "exceptions propagated to caller"
-      - "all 6 unit tests pass"
+      - "all 9 unit tests pass"
 
   - id: 18
     phase: phase_01
@@ -320,12 +320,13 @@ sprints:
     test_file: "01_python_bleak/test_18_ota_dfu.py"
     branch: "feature/phase01-sprint18-dfu"
     depends_on: [5, 12, 17]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "chunking logic correct (500 bytes / 244 = 3 writes)"
       - "progress callback fires per chunk"
+      - "all 16 unit tests pass"
       - "all 5 unit tests pass"
 
   # ─────────────────────────────────────────────
