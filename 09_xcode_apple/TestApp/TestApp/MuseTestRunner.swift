@@ -120,7 +120,9 @@ final class MuseTestRunner {
                     on: cbPeripheral
                 ) { [weak self] data in
                     if let packet = MuseEegParser.parse(data) {
-                        self?.eegChannels[channelName]?.append(contentsOf: packet.samplesUv)
+                        Task { @MainActor in
+                            self?.eegChannels[channelName]?.append(contentsOf: packet.samplesUv)
+                        }
                     }
                 }
                 logger.log(.data, "  Subscribed: \(channelName)")

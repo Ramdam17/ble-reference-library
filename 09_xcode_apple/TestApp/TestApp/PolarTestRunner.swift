@@ -115,8 +115,10 @@ final class PolarTestRunner {
                 on: cbPeripheral
             ) { [weak self] data in
                 if let hr = HeartRateParser.parse(data) {
-                    self?.hrmReadings.append(hr.bpm)
-                    self?.logger.log(.data, "HR: \(hr.bpm) BPM")
+                    Task { @MainActor in
+                        self?.hrmReadings.append(hr.bpm)
+                        self?.logger.log(.data, "HR: \(hr.bpm) BPM")
+                    }
                 }
             }
             logger.log(.success, "HRM notifications active")
@@ -137,7 +139,9 @@ final class PolarTestRunner {
                 on: cbPeripheral
             ) { [weak self] data in
                 if let frame = PolarEcgParser.parse(data) {
-                    self?.ecgSamples.append(contentsOf: frame.samplesUv)
+                    Task { @MainActor in
+                        self?.ecgSamples.append(contentsOf: frame.samplesUv)
+                    }
                 }
             }
 
