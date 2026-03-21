@@ -41,7 +41,8 @@ Integration Steps
     Step 07 — Battery Level         (Sprint 08)
     Step 08 — Read Characteristic   (Sprint 05)
     Step 09 — HR Notifications      (Sprint 06 + parser)
-    Step 10 — Clean Disconnect      (Sprint 03)
+    Step 10 — ECG Stream            (Polar PMD, proprietary)
+    Step 11 — Clean Disconnect      (Sprint 03)
 
 Heart Rate Measurement Format
 -----------------------------
@@ -88,6 +89,47 @@ RR_INTERVAL_RESOLUTION: float = 1024.0
 DEFAULT_STREAM_DURATION: float = 30.0
 """Default streaming duration in seconds for the entrypoint."""
 
+# ─── Polar PMD (Measurement Data) constants ──────────
+
+PMD_SERVICE_UUID: str = "fb005c80-02e7-f387-1cad-8acd2d8df0c8"
+"""Polar Measurement Data Service UUID (proprietary)."""
+
+PMD_CONTROL_UUID: str = "fb005c81-02e7-f387-1cad-8acd2d8df0c8"
+"""PMD Control Point — write requests to start/stop measurements."""
+
+PMD_DATA_UUID: str = "fb005c82-02e7-f387-1cad-8acd2d8df0c8"
+"""PMD Data — notifications with measurement frames."""
+
+ECG_MEASUREMENT_TYPE: int = 0x00
+"""PMD measurement type byte for ECG."""
+
+ECG_SAMPLE_RATE: int = 130
+"""Polar H10 ECG sample rate in Hz."""
+
+ECG_RESOLUTION: int = 14
+"""Polar H10 ECG resolution in bits."""
+
+PMD_START_COMMAND: bytearray = bytearray([
+    0x02,  # START
+    0x00,  # ECG measurement type
+    0x00, 0x01, 0x82, 0x00,  # Sample rate setting: type=0x00, len=1, value=130 (0x82)
+    0x01, 0x01, 0x0E, 0x00,  # Resolution setting: type=0x01, len=1, value=14 (0x0E)
+])
+"""
+PMD Control Point command to start ECG streaming on Polar H10.
+
+Format: [op_code, measurement_type, ...settings]
+Each setting: [type, length, value_le...]
+
+Reference: Polar BLE SDK, ``com.polar.sdk.api.model.PolarSensorSetting``.
+"""
+
+PMD_STOP_COMMAND: bytearray = bytearray([
+    0x03,  # STOP
+    0x00,  # ECG measurement type
+])
+"""PMD Control Point command to stop ECG streaming."""
+
 
 # ─── Data structures ────────────────────────────────
 
@@ -111,6 +153,35 @@ class HeartRateMeasurement:
     bpm: int
     rr_intervals: list[float] = field(default_factory=list)
     sensor_contact: bool | None = None
+
+
+@dataclass
+class PolarEcgFrame:
+    """
+    Parsed Polar PMD ECG data frame.
+
+    Each notification from the PMD Data characteristic contains one frame
+    with a batch of ECG samples at 130 Hz. Samples are signed 24-bit
+    integers representing microvolts (µV).
+
+    Attributes
+    ----------
+    timestamp_ns : int
+        Frame timestamp in nanoseconds since device boot (UINT64 LE).
+    samples_uv : list[int]
+        ECG sample values in microvolts (signed int24).
+        Typically ~73 samples per frame at 130 Hz.
+    sample_rate : int
+        Sample rate in Hz (130 for Polar H10).
+
+    Reference
+    ---------
+    Polar BLE SDK, ``com.polar.sdk.impl.utils.PolarDataUtils``.
+    """
+
+    timestamp_ns: int
+    samples_uv: list[int] = field(default_factory=list)
+    sample_rate: int = ECG_SAMPLE_RATE
 
 
 # ─── Core functions ──────────────────────────────────
@@ -219,6 +290,114 @@ async def subscribe_heart_rate(
     await client.start_notify(HEART_RATE_CHAR_UUID, _on_notify)
 
 
+def parse_ecg_frame(data: bytearray) -> PolarEcgFrame:
+    """
+    Parse a Polar PMD ECG data notification.
+
+    Packet format:
+    - Byte 0: measurement type (0x00 = ECG)
+    - Bytes 1-8: timestamp in nanoseconds (UINT64 little-endian)
+    - Byte 9: frame type (0x00 = raw samples)
+    - Bytes 10+: samples, each 3 bytes signed little-endian (int24, µV)
+
+    Parameters
+    ----------
+    data : bytearray
+        Raw PMD Data notification payload.
+
+    Returns
+    -------
+    PolarEcgFrame
+        Parsed frame with timestamp and ECG samples in µV.
+
+    Reference
+    ---------
+    Polar BLE SDK, ``PolarDataUtils.parseEcgData()``.
+    """
+    # Byte 0: measurement type (skip, already filtered by UUID)
+    # Bytes 1-8: timestamp
+    timestamp_ns = int.from_bytes(data[1:9], byteorder="little", signed=False)
+
+    # Byte 9: frame type (0x00 = raw ECG)
+    # Bytes 10+: int24 samples
+    offset = 10
+    samples: list[int] = []
+    while offset + 2 < len(data):
+        sample = int.from_bytes(data[offset : offset + 3], byteorder="little", signed=True)
+        samples.append(sample)
+        offset += 3
+
+    return PolarEcgFrame(timestamp_ns=timestamp_ns, samples_uv=samples)
+
+
+def _has_pmd_service(client: BleakClient) -> bool:
+    """Check if the connected device exposes the Polar PMD Service."""
+    if client.services is None:
+        return False
+    for service in client.services:
+        if service.uuid.lower() == PMD_SERVICE_UUID:
+            return True
+    return False
+
+
+async def subscribe_ecg(
+    client: BleakClient,
+    callback: Callable[[PolarEcgFrame], None],
+) -> None:
+    """
+    Start ECG streaming on a Polar device via the PMD service.
+
+    Writes the START command to the PMD Control Point and subscribes
+    to PMD Data notifications. Each notification is parsed into a
+    ``PolarEcgFrame`` and passed to the callback.
+
+    Parameters
+    ----------
+    client : BleakClient
+        A connected BleakClient to a Polar device.
+    callback : Callable[[PolarEcgFrame], None]
+        Function called with each parsed ECG frame.
+
+    Raises
+    ------
+    ValueError
+        If the device does not expose the Polar PMD Service.
+    """
+    if not _has_pmd_service(client):
+        raise ValueError(
+            "Device does not expose the Polar PMD Service. "
+            "ECG streaming requires a Polar device (e.g. H10)."
+        )
+
+    def _on_ecg_notify(sender: int, data: bytearray) -> None:
+        if len(data) < 10:
+            return
+        if data[0] == ECG_MEASUREMENT_TYPE:
+            frame = parse_ecg_frame(data)
+            callback(frame)
+
+    await client.start_notify(PMD_DATA_UUID, _on_ecg_notify)
+    await client.write_gatt_char(PMD_CONTROL_UUID, PMD_START_COMMAND, response=True)
+    logger.info("ECG streaming started (PMD Control Point START written)")
+
+
+async def stop_ecg(client: BleakClient) -> None:
+    """
+    Stop ECG streaming on a Polar device.
+
+    Writes the STOP command to the PMD Control Point and unsubscribes
+    from PMD Data notifications.
+
+    Parameters
+    ----------
+    client : BleakClient
+        A connected BleakClient to a Polar device.
+    """
+    await client.write_gatt_char(PMD_CONTROL_UUID, PMD_STOP_COMMAND, response=True)
+    await client.stop_notify(PMD_DATA_UUID)
+    logger.info("ECG streaming stopped")
+
+
 # ─── Integration harness ─────────────────────────────
 
 BODY_SENSOR_LOCATIONS: dict[int, str] = {
@@ -266,6 +445,56 @@ def _skip(msg: str) -> None:
 def _fail(msg: str) -> None:
     print(f"  [FAIL] {msg}")
     logger.error("[FAIL] %s", msg)
+
+
+def _plot_ecg(samples_uv: list[int], sample_rate: int) -> None:
+    """
+    Plot ECG signal and save as PNG next to the log file.
+
+    Parameters
+    ----------
+    samples_uv : list[int]
+        ECG samples in microvolts.
+    sample_rate : int
+        Sample rate in Hz.
+    """
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    from pathlib import Path
+
+    mpl.rcParams.update({
+        "figure.facecolor": "white",
+        "axes.facecolor": "#fafafa",
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "font.family": "sans-serif",
+        "axes.labelsize": 13,
+        "axes.titlesize": 15,
+        "xtick.labelsize": 11,
+        "ytick.labelsize": 11,
+        "legend.frameon": False,
+        "figure.dpi": 150,
+    })
+
+    n = len(samples_uv)
+    time_s = [i / sample_rate for i in range(n)]
+    mv = [uv / 1000.0 for uv in samples_uv]
+
+    fig, ax = plt.subplots(figsize=(14, 5))
+    ax.plot(time_s, mv, color="#e63946", linewidth=0.8, alpha=0.9)
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Amplitude (mV)")
+    ax.set_title("Polar H10 — ECG (130 Hz)")
+    ax.axhline(y=0, color="#adb5bd", linewidth=0.5, linestyle="--")
+
+    log_dir = Path(__file__).resolve().parent.parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    plot_path = log_dir / f"ecg_plot_{ts}.png"
+    fig.savefig(plot_path, dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+    _ok(f"ECG plot saved: {plot_path}")
 
 
 async def run_hrm_example(
@@ -453,9 +682,55 @@ async def run_hrm_example(
         _ok(f"Received {len(measurements)} measurement(s)")
         results["notifications"] = len(measurements) > 0
 
+        # ── Step 10 — ECG Stream / Polar PMD ─────────────────
+        _header(10, "ECG Stream (Polar PMD)", 10)
+        has_pmd = any(
+            s.uuid.lower() == PMD_SERVICE_UUID for s in services_list
+        )
+        if has_pmd:
+            ecg_frames: list[PolarEcgFrame] = []
+            ecg_duration = 5.0
+
+            def on_ecg(frame: PolarEcgFrame) -> None:
+                ecg_frames.append(frame)
+
+            try:
+                await subscribe_ecg(client, on_ecg)
+                _ok(f"ECG started — streaming for {ecg_duration}s...")
+                await asyncio.sleep(ecg_duration)
+                await stop_ecg(client)
+
+                total_samples = sum(len(f.samples_uv) for f in ecg_frames)
+                if total_samples > 0:
+                    all_uv = [s for f in ecg_frames for s in f.samples_uv]
+                    min_uv = min(all_uv)
+                    max_uv = max(all_uv)
+                    mean_uv = sum(all_uv) / len(all_uv)
+                    effective_s = total_samples / ECG_SAMPLE_RATE
+                    _ok(f"Frames: {len(ecg_frames)}, Samples: {total_samples}")
+                    _ok(f"Duration: {effective_s:.1f}s ({ECG_SAMPLE_RATE} Hz)")
+                    _ok(f"Range: {min_uv} .. {max_uv} µV, Mean: {mean_uv:.0f} µV")
+
+                    # ── ECG Plot ──────────────────────────
+                    try:
+                        _plot_ecg(all_uv, ECG_SAMPLE_RATE)
+                    except Exception as e:
+                        logger.warning("ECG plot failed: %s", e)
+
+                    results["ecg"] = True
+                else:
+                    _fail("No ECG samples received")
+                    results["ecg"] = False
+            except Exception as e:
+                _fail(f"ECG streaming error: {e}")
+                results["ecg"] = False
+        else:
+            _skip("Polar PMD Service not available (not a Polar device?)")
+            results["ecg"] = False
+
     finally:
-        # ── Step 10 — Clean Disconnect (Sprint 03) ─────────
-        _header(10, "Clean Disconnect", 3)
+        # ── Step 11 — Clean Disconnect (Sprint 03) ─────────
+        _header(11, "Clean Disconnect", 3)
         if client.is_connected:
             await client.disconnect()
             _ok("Disconnected")
@@ -504,7 +779,7 @@ if __name__ == "__main__":
 
     print("=" * 55)
     print("  BLE Reference Library — Heart Rate Integration Test")
-    print("  Exercises Sprints 01–09 on a real HR device")
+    print("  Exercises Sprints 01–09 + Polar ECG on a real HR device")
     print(f"  Log: {log_file}")
     print("=" * 55)
 

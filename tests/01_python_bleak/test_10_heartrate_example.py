@@ -41,6 +41,16 @@ HEART_RATE_SERVICE_UUID = _mod.HEART_RATE_SERVICE_UUID
 HEART_RATE_CHAR_UUID = _mod.HEART_RATE_CHAR_UUID
 RR_INTERVAL_RESOLUTION = _mod.RR_INTERVAL_RESOLUTION
 
+parse_ecg_frame = _mod.parse_ecg_frame
+subscribe_ecg = _mod.subscribe_ecg
+stop_ecg = _mod.stop_ecg
+PolarEcgFrame = _mod.PolarEcgFrame
+PMD_SERVICE_UUID = _mod.PMD_SERVICE_UUID
+PMD_CONTROL_UUID = _mod.PMD_CONTROL_UUID
+PMD_DATA_UUID = _mod.PMD_DATA_UUID
+ECG_MEASUREMENT_TYPE = _mod.ECG_MEASUREMENT_TYPE
+PMD_START_COMMAND = _mod.PMD_START_COMMAND
+
 
 # ─── Helpers ─────────────────────────────────────────
 
@@ -52,14 +62,17 @@ def _make_service(uuid: str):
     return service
 
 
-def _make_client(has_hr: bool = True):
-    """Create a mock BleakClient with optional Heart Rate Service."""
+def _make_client(has_hr: bool = True, has_pmd: bool = False):
+    """Create a mock BleakClient with optional Heart Rate / PMD Service."""
     client = MagicMock()
     services = []
     if has_hr:
         services.append(_make_service(HEART_RATE_SERVICE_UUID))
+    if has_pmd:
+        services.append(_make_service(PMD_SERVICE_UUID))
     client.services = services
     client.start_notify = AsyncMock()
+    client.write_gatt_char = AsyncMock()
     return client
 
 
@@ -201,3 +214,103 @@ async def test_subscribe_heart_rate_service_absent():
         await subscribe_heart_rate(client, lambda m: None)
 
     client.start_notify.assert_not_awaited()
+
+
+# ─── ECG Parser Tests ──────────────────────────────
+
+
+def _build_ecg_packet(timestamp_ns: int, samples: list[int]) -> bytearray:
+    """Forge a PMD ECG notification packet from known values."""
+    data = bytearray([ECG_MEASUREMENT_TYPE])  # byte 0: type
+    data += timestamp_ns.to_bytes(8, "little", signed=False)  # bytes 1-8: timestamp
+    data += bytearray([0x00])  # byte 9: frame type (raw)
+    for sample in samples:
+        data += sample.to_bytes(3, "little", signed=True)  # int24 LE
+    return data
+
+
+def test_parse_ecg_frame_basic():
+    """parse_ecg_frame must decode timestamp and positive int24 samples."""
+    ts = 1_000_000_000  # 1 second in ns
+    samples = [100, 250, 500]
+    data = _build_ecg_packet(ts, samples)
+
+    frame = parse_ecg_frame(data)
+
+    assert frame.timestamp_ns == ts
+    assert frame.samples_uv == [100, 250, 500]
+    assert frame.sample_rate == 130
+
+
+def test_parse_ecg_frame_negative_values():
+    """parse_ecg_frame must handle negative int24 values (signed)."""
+    ts = 2_000_000_000
+    # Negative values represent descending phase of QRS complex
+    samples = [-100, -1, -8388608]  # min int24 = -2^23
+    data = _build_ecg_packet(ts, samples)
+
+    frame = parse_ecg_frame(data)
+
+    assert frame.samples_uv == [-100, -1, -8388608]
+
+
+def test_parse_ecg_frame_empty_samples():
+    """parse_ecg_frame with no sample bytes must return empty list."""
+    # Just header: type(1) + timestamp(8) + frame_type(1) = 10 bytes, no samples
+    data = bytearray([0x00])
+    data += (0).to_bytes(8, "little")
+    data += bytearray([0x00])
+
+    frame = parse_ecg_frame(data)
+
+    assert frame.samples_uv == []
+    assert frame.timestamp_ns == 0
+
+
+@pytest.mark.asyncio
+async def test_subscribe_ecg_start_command():
+    """subscribe_ecg must write the START command to the PMD Control Point."""
+    client = _make_client(has_hr=True, has_pmd=True)
+
+    await subscribe_ecg(client, lambda f: None)
+
+    # Verify start_notify was called on PMD Data UUID
+    client.start_notify.assert_awaited_once()
+    notify_uuid = client.start_notify.call_args[0][0]
+    assert notify_uuid == PMD_DATA_UUID
+
+    # Verify write_gatt_char was called with START command on Control Point
+    client.write_gatt_char.assert_awaited_once_with(
+        PMD_CONTROL_UUID, PMD_START_COMMAND, response=True
+    )
+
+
+@pytest.mark.asyncio
+async def test_subscribe_ecg_service_absent():
+    """subscribe_ecg must raise ValueError when PMD Service is absent."""
+    client = _make_client(has_hr=True, has_pmd=False)
+
+    with pytest.raises(ValueError, match="Polar PMD Service"):
+        await subscribe_ecg(client, lambda f: None)
+
+    client.start_notify.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_subscribe_ecg_callback_invoked():
+    """subscribe_ecg must parse PMD notifications and invoke callback."""
+    client = _make_client(has_hr=True, has_pmd=True)
+    received: list[PolarEcgFrame] = []
+
+    await subscribe_ecg(client, lambda f: received.append(f))
+
+    # Extract the notification callback registered on PMD_DATA_UUID
+    wrapped = client.start_notify.call_args[0][1]
+
+    # Simulate a PMD ECG notification with 2 samples
+    packet = _build_ecg_packet(5_000_000_000, [42, -42])
+    wrapped(20, packet)
+
+    assert len(received) == 1
+    assert received[0].samples_uv == [42, -42]
+    assert received[0].timestamp_ns == 5_000_000_000

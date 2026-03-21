@@ -8,6 +8,7 @@ dependencies = [
     "bleak>=0.21",
     "bitstring>=4.0",
     "numpy>=1.26",
+    "matplotlib>=3.10.8",
 ]
 
 [project.optional-dependencies]
