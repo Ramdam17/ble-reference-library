@@ -34,7 +34,11 @@ phases:
     folder: "09_xcode_apple"
     sprint_range: [19, 36]
     git_tag: "phase02-complete"
-    status: not_started
+    status: in_progress
+    phase_integration_gate:
+      status: pending
+      polar_artifacts: null
+      muse_artifacts: null
 
   - id: phase_03
     name: "JavaScript (Node.js + Web Bluetooth)"
