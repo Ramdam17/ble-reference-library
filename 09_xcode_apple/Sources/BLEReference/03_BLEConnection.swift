@@ -182,6 +182,9 @@ public final class BLEConnector: NSObject {
     public init(centralManager: CBCentralManager, queue: DispatchQueue = DispatchQueue(label: "com.ble-reference.connector")) {
         self.queue = queue
         self.centralManager = centralManager
+        // Sync power state — the CM is already initialized so
+        // centralManagerDidUpdateState won't fire again for .poweredOn.
+        self.isPoweredOn = centralManager.state == .poweredOn
         super.init()
         self.centralManager.delegate = self
     }
