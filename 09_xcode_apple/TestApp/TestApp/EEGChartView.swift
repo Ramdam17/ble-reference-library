@@ -16,17 +16,24 @@ struct EEGChartView: View {
 
     private let channelSpacing: Double = 300.0
 
+    /// Skip the first 2 seconds to avoid Muse startup drift.
+    private let skipSeconds: Double = 2.0
+
     private var dataPoints: [EEGDataPoint] {
+        let skipSamples = Int(skipSeconds * sampleRate)
         var points: [EEGDataPoint] = []
         var globalIdx = 0
         for (chIdx, name) in channelOrder.enumerated() {
-            guard let samples = channels[name] else { continue }
+            guard let samples = channels[name], samples.count > skipSamples else { continue }
+            let trimmed = Array(samples.dropFirst(skipSamples))
             let offset = Double(chIdx) * channelSpacing
-            for (i, uv) in samples.enumerated() {
+            for (i, uv) in trimmed.enumerated() {
+                // Clamp to ±200 µV per channel to keep scale readable
+                let clamped = max(-200, min(200, uv))
                 points.append(EEGDataPoint(
                     id: globalIdx,
                     time: Double(i) / sampleRate,
-                    uv: uv + offset,
+                    uv: clamped + offset,
                     channel: name
                 ))
                 globalIdx += 1
