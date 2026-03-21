@@ -118,7 +118,7 @@ final class MuseTestRunner {
                 try await subscriber!.subscribe(
                     to: char,
                     on: cbPeripheral
-                ) { [weak self] data in
+                ) { [weak self, channelName] data in
                     if let packet = MuseEegParser.parse(data) {
                         Task { @MainActor in
                             self?.eegChannels[channelName]?.append(contentsOf: packet.samplesUv)
