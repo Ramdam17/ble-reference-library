@@ -101,8 +101,8 @@ sprints:
     test_file: "01_python_bleak/test_03_connection.py"
     branch: "feature/phase01-sprint03-connection"
     depends_on: [1]
-    status: not_started
-    started_at: null
+    status: in_progress
+    started_at: "2026-03-20"
     completed_at: null
     acceptance_criteria:
       - "_intentional_disconnect flag prevents spurious reconnect"
