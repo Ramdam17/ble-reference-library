@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>This app uses Bluetooth to connect to BLE devices (Polar H10, Muse 2) for integration testing.</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>This app uses Bluetooth to connect to BLE devices for integration testing.</string>
+</dict>
+</plist>
