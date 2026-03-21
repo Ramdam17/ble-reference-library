@@ -65,15 +65,15 @@ A collection of **self-contained BLE implementation files** covering 17 features
 
 ```bash
 # Clone and install
-git clone <repo-url>
+git clone git@github.com:Ramdam17/ble-reference-library.git
 cd ble-reference-library
-pip install -e ".[dev]"
+uv sync --extra dev
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Try a scan
-python 01_python_bleak/01_passive_scan.py
+uv run python 01_python_bleak/01_scan.py
 ```
 
 ## Development

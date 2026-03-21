@@ -8,11 +8,16 @@ dependencies = [
     "bleak>=0.21",
     "bitstring>=4.0",
     "numpy>=1.26",
+    "matplotlib>=3.10.8",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    "pytest-asyncio>=0.23",
     "ruff>=0.4",
     "black>=24.0",
 ]

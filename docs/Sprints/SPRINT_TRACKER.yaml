@@ -18,42 +18,46 @@
 meta:
   library: ble-reference-library
   version: "1.0"
-  total_sprints: 102
+  total_sprints: 108
   last_updated: "2026-03-20"
 
 phases:
   - id: phase_01
     name: "Python / Bleak"
     folder: "01_python_bleak"
-    sprint_range: [1, 17]
+    sprint_range: [1, 18]
     git_tag: "phase01-complete"
-    status: not_started
+    status: in_progress
 
   - id: phase_02
     name: "Swift / CoreBluetooth (Apple)"
     folder: "09_xcode_apple"
-    sprint_range: [18, 34]
+    sprint_range: [19, 36]
     git_tag: "phase02-complete"
-    status: not_started
+    status: in_progress
+    phase_integration_gate:
+      status: pending
+      polar_artifacts: null
+      muse_artifacts: null
 
   - id: phase_03
     name: "JavaScript (Node.js + Web Bluetooth)"
     folders: ["07_javascript_node", "08_javascript_web"]
-    sprint_range: [35, 51]
+    sprint_range: [37, 54]
     git_tag: "phase03-complete"
     status: not_started
 
   - id: phase_04
     name: "Unity (Editor · Android/Quest · Mac · iOS)"
     folders: ["02_unity_editor", "03_unity_android_quest", "04_unity_mac", "05_unity_ios"]
-    sprint_range: [52, 85]
+    sprint_range: [55, 90]
     git_tag: "phase04-complete"
     status: not_started
 
   - id: phase_05
     name: "C++ / SimpleBLE"
     folder: "06_cpp"
-    sprint_range: [86, 102]
+    sprint_range: [91, 108]
     git_tag: "phase05-complete"
     status: not_started
 
@@ -68,11 +72,11 @@ sprints:
     name: "Passive Scan"
     file: "01_python_bleak/01_scan.py"
     test_file: "01_python_bleak/test_01_scan.py"
-    branch: "feature/phase01-sprint01-passive-scan"
+    branch: "feature/phase01-sprint1-passive-scan"
     depends_on: []
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "scan() returns list of BLEDevice"
       - "unknown name handled as [unknown]"
@@ -84,11 +88,11 @@ sprints:
     name: "Filtered Scan"
     file: "01_python_bleak/02_scan_filtered.py"
     test_file: "01_python_bleak/test_02_scan_filtered.py"
-    branch: "feature/phase01-sprint02-filtered-scan"
+    branch: "feature/phase01-sprint2-filtered-scan"
     depends_on: [1]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "scan_by_name is case-insensitive substring match"
       - "UUID normalized to full 128-bit lowercase"
@@ -99,11 +103,11 @@ sprints:
     name: "Connection Lifecycle"
     file: "01_python_bleak/03_connection.py"
     test_file: "01_python_bleak/test_03_connection.py"
-    branch: "feature/phase01-sprint03-connection"
+    branch: "feature/phase01-sprint3-connection"
     depends_on: [1]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "_intentional_disconnect flag prevents spurious reconnect"
       - "exponential backoff verified in tests"
@@ -114,11 +118,11 @@ sprints:
     name: "Services & Characteristics Discovery"
     file: "01_python_bleak/04_services_characteristics.py"
     test_file: "01_python_bleak/test_04_services_characteristics.py"
-    branch: "feature/phase01-sprint04-services-discovery"
+    branch: "feature/phase01-sprint4-services-discovery"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "all 5 property keys present in characteristic_properties()"
       - "all 6 unit tests pass"
@@ -128,11 +132,11 @@ sprints:
     name: "Read & Write"
     file: "01_python_bleak/05_read_write.py"
     test_file: "01_python_bleak/test_05_read_write.py"
-    branch: "feature/phase01-sprint05-read-write"
+    branch: "feature/phase01-sprint5-read-write"
     depends_on: [4]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "property validation raises ValueError for non-readable/writable chars"
       - "all 9 unit tests pass"
@@ -142,11 +146,11 @@ sprints:
     name: "Notifications & Indications"
     file: "01_python_bleak/06_notifications.py"
     test_file: "01_python_bleak/test_06_notifications.py"
-    branch: "feature/phase01-sprint06-notifications"
+    branch: "feature/phase01-sprint6-notifications"
     depends_on: [5]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "double-subscribe guard in place"
       - "all 7 unit tests pass"
@@ -156,11 +160,11 @@ sprints:
     name: "Scan Without Connection"
     file: "01_python_bleak/07_scan_without_connect.py"
     test_file: "01_python_bleak/test_07_scan_without_connect.py"
-    branch: "feature/phase01-sprint07-scan-no-connect"
+    branch: "feature/phase01-sprint7-scan-no-connect"
     depends_on: [2]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "all 7 unit tests pass"
 
@@ -169,39 +173,58 @@ sprints:
     name: "Battery Level"
     file: "01_python_bleak/08_battery.py"
     test_file: "01_python_bleak/test_08_battery.py"
-    branch: "feature/phase01-sprint08-battery"
+    branch: "feature/phase01-sprint8-battery"
     depends_on: [5]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "returns None when Battery Service absent"
       - "all 4 unit tests pass"
 
   - id: 9
     phase: phase_01
+    name: "Device Information Service"
+    file: "01_python_bleak/09_device_info.py"
+    test_file: "01_python_bleak/test_09_device_info.py"
+    branch: "feature/phase01-sprint9-device-info"
+    depends_on: [4, 5]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
+    notes: "NEW SPRINT — inserted for multi-sensor identification (hyperscanning). Enables persistent device ID on macOS/iOS where MAC addresses are hidden."
+    acceptance_criteria:
+      - "DeviceInfo dataclass with 5 optional string fields"
+      - "returns None when DIS absent"
+      - "device_identifier prefers serial, falls back to manufacturer+model"
+      - "graceful handling of unreadable characteristics"
+      - "all 8 unit tests pass"
+
+  - id: 10
+    phase: phase_01
     name: "Heart Rate Monitor Example"
-    file: "01_python_bleak/09_heartrate_example.py"
-    test_file: "01_python_bleak/test_09_heartrate_example.py"
-    branch: "feature/phase01-sprint09-heartrate"
-    depends_on: [3, 5, 6, 8]
-    status: not_started
-    started_at: null
-    completed_at: null
+    file: "01_python_bleak/10_heartrate_example.py"
+    test_file: "01_python_bleak/test_10_heartrate_example.py"
+    branch: "feature/phase01-sprint10-heartrate"
+    depends_on: [3, 5, 6, 8, 9]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "parser handles UINT8 and UINT16 BPM modes"
       - "RR intervals converted to seconds correctly"
       - "all 6 unit tests pass"
 
-  - id: 10
+  - id: 11
     phase: phase_01
     name: "Muse EEG Example"
-    file: "01_python_bleak/10_muse_example.py"
-    test_file: "01_python_bleak/test_10_muse_example.py"
-    branch: "feature/phase01-sprint10-muse"
-    depends_on: [3, 6, 8]
-    status: not_started
-    started_at: null
+    file: "01_python_bleak/11_muse_example.py"
+    test_file: "01_python_bleak/test_11_muse_example.py"
+    branch: "feature/phase01-sprint11-muse"
+    depends_on: [3, 6, 8, 9]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     completed_at: null
     notes: "CANONICAL REFERENCE for Muse parser. All other platforms cross-validate against this."
     acceptance_criteria:
@@ -209,303 +232,319 @@ sprints:
       - "all 7 unit tests pass with hardcoded byte sequences"
       - "test vectors added to 00_shared/muse_test_vectors.json"
 
-  - id: 11
+  - id: 12
     phase: phase_01
     name: "Error Handling & Timeouts"
-    file: "01_python_bleak/11_error_handling.py"
-    test_file: "01_python_bleak/test_11_error_handling.py"
-    branch: "feature/phase01-sprint11-error-handling"
+    file: "01_python_bleak/12_error_handling.py"
+    test_file: "01_python_bleak/test_12_error_handling.py"
+    branch: "feature/phase01-sprint12-error-handling"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "retry decorator works on async functions"
       - "all 6 unit tests pass"
 
-  - id: 12
+  - id: 13
     phase: phase_01
     name: "MTU Negotiation"
-    file: "01_python_bleak/12_mtu_negotiation.py"
-    test_file: "01_python_bleak/test_12_mtu_negotiation.py"
-    branch: "feature/phase01-sprint12-mtu"
+    file: "01_python_bleak/13_mtu_negotiation.py"
+    test_file: "01_python_bleak/test_13_mtu_negotiation.py"
+    branch: "feature/phase01-sprint13-mtu"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "platform behavior documented per OS"
       - "all 3 unit tests pass"
 
-  - id: 13
+  - id: 14
     phase: phase_01
     name: "Bonding & Pairing"
-    file: "01_python_bleak/13_bonding_pairing.py"
-    test_file: "01_python_bleak/test_13_bonding_pairing.py"
-    branch: "feature/phase01-sprint13-bonding"
+    file: "01_python_bleak/14_bonding_pairing.py"
+    test_file: "01_python_bleak/test_14_bonding_pairing.py"
+    branch: "feature/phase01-sprint14-bonding"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "per-platform behavior documented in docstring"
       - "all 3 unit tests pass"
 
-  - id: 14
-    phase: phase_01
-    name: "Peripheral Mode"
-    file: "01_python_bleak/14_peripheral_mode.py"
-    test_file: "01_python_bleak/test_14_peripheral_mode.py"
-    branch: "feature/phase01-sprint14-peripheral"
-    depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria:
-      - "bless dependency documented in README"
-      - "all 3 unit tests pass"
-
   - id: 15
     phase: phase_01
-    name: "RSSI & Distance Estimation"
-    file: "01_python_bleak/15_rssi_distance.py"
-    test_file: "01_python_bleak/test_15_rssi_distance.py"
-    branch: "feature/phase01-sprint15-rssi"
-    depends_on: [1]
-    status: not_started
-    started_at: null
-    completed_at: null
+    name: "Peripheral Mode"
+    file: "01_python_bleak/15_peripheral_mode.py"
+    test_file: "01_python_bleak/test_15_peripheral_mode.py"
+    branch: "feature/phase01-sprint15-peripheral"
+    depends_on: [3]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
-      - "formula documented as approximate (±50%)"
-      - "all 4 unit tests pass"
+      - "bless incompatibility documented in module docstring"
+      - "all 9 unit tests pass"
 
   - id: 16
     phase: phase_01
-    name: "Command Queue"
-    file: "01_python_bleak/16_command_queue.py"
-    test_file: "01_python_bleak/test_16_command_queue.py"
-    branch: "feature/phase01-sprint16-command-queue"
-    depends_on: [5]
-    status: not_started
-    started_at: null
-    completed_at: null
+    name: "RSSI & Distance Estimation"
+    file: "01_python_bleak/16_rssi_distance.py"
+    test_file: "01_python_bleak/test_16_rssi_distance.py"
+    branch: "feature/phase01-sprint16-rssi"
+    depends_on: [1]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
-      - "sequential execution verified"
-      - "exceptions propagated to caller"
-      - "all 6 unit tests pass"
+      - "formula documented as approximate (±50–200%)"
+      - "all 13 unit tests pass"
 
   - id: 17
     phase: phase_01
+    name: "Command Queue"
+    file: "01_python_bleak/17_command_queue.py"
+    test_file: "01_python_bleak/test_17_command_queue.py"
+    branch: "feature/phase01-sprint17-command-queue"
+    depends_on: [5]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
+    acceptance_criteria:
+      - "sequential execution verified"
+      - "exceptions propagated to caller"
+      - "all 9 unit tests pass"
+
+  - id: 18
+    phase: phase_01
     name: "OTA / DFU"
-    file: "01_python_bleak/17_ota_dfu.py"
-    test_file: "01_python_bleak/test_17_ota_dfu.py"
-    branch: "feature/phase01-sprint17-dfu"
-    depends_on: [5, 11, 16]
-    status: not_started
-    started_at: null
-    completed_at: null
+    file: "01_python_bleak/18_ota_dfu.py"
+    test_file: "01_python_bleak/test_18_ota_dfu.py"
+    branch: "feature/phase01-sprint18-dfu"
+    depends_on: [5, 12, 17]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "chunking logic correct (500 bytes / 244 = 3 writes)"
       - "progress callback fires per chunk"
+      - "all 16 unit tests pass"
       - "all 5 unit tests pass"
 
   # ─────────────────────────────────────────────
   # PHASE 02 — Swift / CoreBluetooth
   # ─────────────────────────────────────────────
 
-  - id: 18
-    phase: phase_02
-    name: "Passive Scan"
-    file: "09_xcode_apple/Shared/01_BLEScan.swift"
-    branch: "feature/phase02-sprint18-passive-scan"
-    depends_on: []
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria:
-      - "scan deferred until CBCentralManager .poweredOn"
-      - "all 4 unit tests pass"
-
   - id: 19
     phase: phase_02
-    name: "Filtered Scan"
-    file: "09_xcode_apple/Shared/02_BLEScanFiltered.swift"
-    branch: "feature/phase02-sprint19-filtered-scan"
-    depends_on: [18]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 4 unit tests pass"]
+    name: "Passive Scan"
+    file: "09_xcode_apple/Sources/BLEReference/01_BLEScan.swift"
+    branch: "feature/phase02-sprint19-passive-scan"
+    depends_on: []
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria:
+      - "scan deferred until CBCentralManager .poweredOn"
+      - "all 5 unit tests pass"
 
   - id: 20
     phase: phase_02
-    name: "Connection Lifecycle"
-    file: "09_xcode_apple/Shared/03_BLEConnection.swift"
-    branch: "feature/phase02-sprint20-connection"
-    depends_on: [18]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria:
-      - "_intentionalDisconnect flag prevents spurious reconnect"
-      - "all 6 unit tests pass"
+    name: "Filtered Scan"
+    file: "09_xcode_apple/Sources/BLEReference/02_BLEScanFiltered.swift"
+    branch: "feature/phase02-sprint20-filtered-scan"
+    depends_on: [19]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 8 unit tests pass"]
 
   - id: 21
     phase: phase_02
-    name: "Services & Characteristics Discovery"
-    file: "09_xcode_apple/Shared/04_BLEServicesDiscovery.swift"
-    branch: "feature/phase02-sprint21-services-discovery"
-    depends_on: [20]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["two-step discovery chain correct", "all 4 unit tests pass"]
+    name: "Connection Lifecycle"
+    file: "09_xcode_apple/Sources/BLEReference/03_BLEConnection.swift"
+    branch: "feature/phase02-sprint21-connection"
+    depends_on: [19]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria:
+      - "_intentionalDisconnect flag prevents spurious reconnect"
+      - "all 7 unit tests pass"
 
   - id: 22
     phase: phase_02
-    name: "Read & Write"
-    file: "09_xcode_apple/Shared/05_BLEReadWrite.swift"
-    branch: "feature/phase02-sprint22-read-write"
+    name: "Services & Characteristics Discovery"
+    file: "09_xcode_apple/Sources/BLEReference/04_BLEServicesDiscovery.swift"
+    branch: "feature/phase02-sprint22-services-discovery"
     depends_on: [21]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 6 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["two-step discovery chain correct", "all 5 unit tests pass"]
 
   - id: 23
     phase: phase_02
-    name: "Notifications & Indications"
-    file: "09_xcode_apple/Shared/06_BLENotifications.swift"
-    branch: "feature/phase02-sprint23-notifications"
+    name: "Read & Write"
+    file: "09_xcode_apple/Sources/BLEReference/05_BLEReadWrite.swift"
+    branch: "feature/phase02-sprint23-read-write"
     depends_on: [22]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 5 unit tests pass"]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 2 unit tests pass"]
 
   - id: 24
     phase: phase_02
-    name: "Scan Without Connection"
-    file: "09_xcode_apple/Shared/07_BLEScanNoConnect.swift"
-    branch: "feature/phase02-sprint24-adv-data"
-    depends_on: [18]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 4 unit tests pass"]
+    name: "Notifications & Indications"
+    file: "09_xcode_apple/Sources/BLEReference/06_BLENotifications.swift"
+    branch: "feature/phase02-sprint24-notifications"
+    depends_on: [23]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 1 unit tests pass"]
 
   - id: 25
     phase: phase_02
-    name: "Battery Level"
-    file: "09_xcode_apple/Shared/08_BLEBattery.swift"
-    branch: "feature/phase02-sprint25-battery"
-    depends_on: [22]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["returns nil when Battery Service absent", "all 3 unit tests pass"]
+    name: "Scan Without Connection"
+    file: "09_xcode_apple/Sources/BLEReference/07_BLEScanNoConnect.swift"
+    branch: "feature/phase02-sprint25-adv-data"
+    depends_on: [19]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 3 unit tests pass"]
 
   - id: 26
     phase: phase_02
-    name: "Heart Rate Monitor Example"
-    file: "09_xcode_apple/Shared/09_BLEHeartRate.swift"
-    branch: "feature/phase02-sprint26-heartrate"
-    depends_on: [23, 25]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 5 unit tests pass"]
+    name: "Battery Level"
+    file: "09_xcode_apple/Sources/BLEReference/08_BLEBattery.swift"
+    branch: "feature/phase02-sprint26-battery"
+    depends_on: [23]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["returns nil when Battery Service absent", "all 2 unit tests pass"]
 
   - id: 27
     phase: phase_02
-    name: "Muse EEG Example"
-    file: "09_xcode_apple/Shared/10_MuseEEG.swift"
-    branch: "feature/phase02-sprint27-muse"
-    depends_on: [23, 25]
-    status: not_started
-    started_at: null
-    completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    name: "Device Information Service"
+    file: "09_xcode_apple/Sources/BLEReference/09_BLEDeviceInfo.swift"
+    branch: "feature/phase02-sprint27-device-info"
+    depends_on: [22, 23]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    notes: "Enables persistent device identification for multi-sensor setups on Apple platforms."
     acceptance_criteria:
-      - "Swift parser output matches Python reference for all test vectors"
+      - "DeviceInfo struct with 5 optional string fields"
+      - "returns nil when DIS absent"
       - "all 6 unit tests pass"
 
   - id: 28
     phase: phase_02
-    name: "Error Handling & Timeouts"
-    file: "09_xcode_apple/Shared/11_BLEErrors.swift"
-    branch: "feature/phase02-sprint28-errors"
-    depends_on: [20]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["all 3 unit tests pass"]
+    name: "Heart Rate Monitor Example"
+    file: "09_xcode_apple/Sources/BLEReference/10_BLEHeartRate.swift"
+    branch: "feature/phase02-sprint28-heartrate"
+    depends_on: [24, 26]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 11 unit tests pass"]
 
   - id: 29
     phase: phase_02
-    name: "MTU Negotiation"
-    file: "09_xcode_apple/Shared/12_BLEMTU.swift"
-    branch: "feature/phase02-sprint29-mtu"
-    depends_on: [20]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["CoreBluetooth auto-negotiation documented", "all 2 unit tests pass"]
+    name: "Muse EEG Example"
+    file: "09_xcode_apple/Sources/BLEReference/11_MuseEEG.swift"
+    branch: "feature/phase02-sprint29-muse"
+    depends_on: [24, 26]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
+    acceptance_criteria:
+      - "Swift parser output matches Python reference for all test vectors"
+      - "all 5 unit tests pass"
 
   - id: 30
     phase: phase_02
-    name: "Bonding & Pairing"
-    file: "09_xcode_apple/Shared/13_BLEPairing.swift"
-    branch: "feature/phase02-sprint30-pairing"
-    depends_on: [20]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["implicit pairing model documented", "all 2 unit tests pass"]
+    name: "Error Handling & Timeouts"
+    file: "09_xcode_apple/Sources/BLEReference/12_BLEErrors.swift"
+    branch: "feature/phase02-sprint30-errors"
+    depends_on: [21]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 4 unit tests pass"]
 
   - id: 31
     phase: phase_02
-    name: "Peripheral Mode"
-    file: "09_xcode_apple/Shared/14_BLEPeripheral.swift"
-    branch: "feature/phase02-sprint31-peripheral"
-    depends_on: [20]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["platform config differences in iOS/macOS README", "all 4 unit tests pass"]
+    name: "MTU Negotiation"
+    file: "09_xcode_apple/Sources/BLEReference/13_BLEMTU.swift"
+    branch: "feature/phase02-sprint31-mtu"
+    depends_on: [21]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["CoreBluetooth auto-negotiation documented", "all 2 unit tests pass"]
 
   - id: 32
     phase: phase_02
-    name: "RSSI & Distance Estimation"
-    file: "09_xcode_apple/Shared/15_BLERSSIDistance.swift"
-    branch: "feature/phase02-sprint32-rssi"
-    depends_on: [20]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["formula matches Python reference", "all 3 unit tests pass"]
+    name: "Bonding & Pairing"
+    file: "09_xcode_apple/Sources/BLEReference/14_BLEPairing.swift"
+    branch: "feature/phase02-sprint32-pairing"
+    depends_on: [21]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["implicit pairing model documented", "all 3 unit tests pass"]
 
   - id: 33
     phase: phase_02
-    name: "Command Queue"
-    file: "09_xcode_apple/Shared/16_BLECommandQueue.swift"
-    branch: "feature/phase02-sprint33-command-queue"
-    depends_on: [22]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["serial execution verified", "all 3 unit tests pass"]
+    name: "Peripheral Mode"
+    file: "09_xcode_apple/Sources/BLEReference/15_BLEPeripheral.swift"
+    branch: "feature/phase02-sprint33-peripheral"
+    depends_on: [21]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["all 2 unit tests pass"]
 
   - id: 34
     phase: phase_02
+    name: "RSSI & Distance Estimation"
+    file: "09_xcode_apple/Sources/BLEReference/16_BLERSSIDistance.swift"
+    branch: "feature/phase02-sprint34-rssi"
+    depends_on: [21]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["formula matches Python reference", "all 6 unit tests pass"]
+
+  - id: 35
+    phase: phase_02
+    name: "Command Queue"
+    file: "09_xcode_apple/Sources/BLEReference/17_BLECommandQueue.swift"
+    branch: "feature/phase02-sprint35-command-queue"
+    depends_on: [23]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["serial execution verified", "all 3 unit tests pass"]
+
+  - id: 36
+    phase: phase_02
     name: "OTA / DFU"
-    file: "09_xcode_apple/Shared/17_BLEDFU.swift"
-    branch: "feature/phase02-sprint34-dfu"
-    depends_on: [22, 28, 33]
-    status: not_started
-    started_at: null
-    completed_at: null
-    acceptance_criteria: ["chunking matches Python reference", "all 4 unit tests pass"]
+    file: "09_xcode_apple/Sources/BLEReference/18_BLEDFU.swift"
+    branch: "feature/phase02-sprint36-dfu"
+    depends_on: [23, 30, 35]
+    status: done
+    started_at: "2026-03-21"
+    completed_at: "2026-03-21"
+    acceptance_criteria: ["chunking matches Python reference", "all 7 unit tests pass"]
 
   # ─────────────────────────────────────────────
   # PHASE 03 — JavaScript (Node.js + Web Bluetooth)
@@ -513,192 +552,207 @@ sprints:
   # Only key fields shown for brevity; expand as needed.
   # ─────────────────────────────────────────────
 
-  - id: 35
+  - id: 37
     phase: phase_03
     name: "Passive Scan (Node.js) + Web stub"
     files: ["07_javascript_node/01_scan.js", "08_javascript_web/01_scan.js"]
-    branch: "feature/phase03-sprint35-passive-scan"
+    branch: "feature/phase03-sprint37-passive-scan"
     depends_on: []
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 4 unit tests pass", "Web Bluetooth stub has spec link"]
 
-  - id: 36
+  - id: 38
     phase: phase_03
     name: "Filtered Scan"
     files: ["07_javascript_node/02_scan_filtered.js", "08_javascript_web/02_scan_filtered.js"]
-    branch: "feature/phase03-sprint36-filtered-scan"
-    depends_on: [35]
+    branch: "feature/phase03-sprint38-filtered-scan"
+    depends_on: [37]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 5 unit tests pass"]
 
-  - id: 37
+  - id: 39
     phase: phase_03
     name: "Connection Lifecycle"
     files: ["07_javascript_node/03_connection.js", "08_javascript_web/03_connection.js"]
-    branch: "feature/phase03-sprint37-connection"
-    depends_on: [36]
+    branch: "feature/phase03-sprint39-connection"
+    depends_on: [38]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["_intentionalDisconnect pattern consistent", "all 7 unit tests pass"]
 
-  - id: 38
+  - id: 40
     phase: phase_03
     name: "Services & Characteristics Discovery"
     files: ["07_javascript_node/04_services_characteristics.js", "08_javascript_web/04_services_characteristics.js"]
-    branch: "feature/phase03-sprint38-services-discovery"
-    depends_on: [37]
+    branch: "feature/phase03-sprint40-services-discovery"
+    depends_on: [39]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 4 unit tests pass per stack (8 total)"]
 
-  - id: 39
+  - id: 41
     phase: phase_03
     name: "Read & Write"
     files: ["07_javascript_node/05_read_write.js", "08_javascript_web/05_read_write.js"]
-    branch: "feature/phase03-sprint39-read-write"
-    depends_on: [38]
+    branch: "feature/phase03-sprint41-read-write"
+    depends_on: [40]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 10 unit tests pass"]
 
-  - id: 40
+  - id: 42
     phase: phase_03
     name: "Notifications & Indications"
     files: ["07_javascript_node/06_notifications.js", "08_javascript_web/06_notifications.js"]
-    branch: "feature/phase03-sprint40-notifications"
-    depends_on: [39]
+    branch: "feature/phase03-sprint42-notifications"
+    depends_on: [41]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 7 unit tests pass"]
 
-  - id: 41
+  - id: 43
     phase: phase_03
     name: "Scan Without Connection (Node.js) + Web stub"
     files: ["07_javascript_node/07_scan_without_connect.js", "08_javascript_web/07_scan_without_connect.js"]
-    branch: "feature/phase03-sprint41-adv-data"
-    depends_on: [35]
+    branch: "feature/phase03-sprint43-adv-data"
+    depends_on: [37]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass"]
 
-  - id: 42
+  - id: 44
     phase: phase_03
     name: "Battery Level"
     files: ["07_javascript_node/08_battery.js", "08_javascript_web/08_battery.js"]
-    branch: "feature/phase03-sprint42-battery"
-    depends_on: [39]
+    branch: "feature/phase03-sprint44-battery"
+    depends_on: [41]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 6 unit tests pass (3 per stack)"]
 
-  - id: 43
+
+  - id: 45
+    phase: phase_03
+    name: "Device Information Service"
+    files: ["07_javascript_node/09_device_info.js", "08_javascript_web/09_device_info.js"]
+    branch: "feature/phase03-sprint45-device-info"
+    depends_on: [40, 41]
+    status: not_started
+    started_at: null
+    completed_at: null
+    notes: "Enables persistent device identification for multi-sensor setups."
+    acceptance_criteria:
+      - "DeviceInfo object with 5 nullable string fields"
+      - "returns null when DIS absent"
+      - "all 5 unit tests pass per stack (10 total)"
+  - id: 46
     phase: phase_03
     name: "Heart Rate Monitor Example"
     files: ["07_javascript_node/09_heartrate_example.js", "08_javascript_web/09_heartrate_example.js"]
-    branch: "feature/phase03-sprint43-heartrate"
-    depends_on: [40, 42]
+    branch: "feature/phase03-sprint46-heartrate"
+    depends_on: [42, 44]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["parser logic identical across both stacks", "all 5 unit tests pass"]
 
-  - id: 44
+  - id: 47
     phase: phase_03
     name: "Muse EEG Example"
     files: ["07_javascript_node/10_muse_example.js", "08_javascript_web/10_muse_example.js"]
-    branch: "feature/phase03-sprint44-muse"
-    depends_on: [40]
+    branch: "feature/phase03-sprint47-muse"
+    depends_on: [42]
     status: not_started
     started_at: null
     completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria:
       - "JS parser output matches Python reference for all test vectors"
       - "all 6 unit tests pass"
       - "Web Bluetooth notification throttling warning in comments"
 
-  - id: 45
+  - id: 48
     phase: phase_03
     name: "Error Handling & Timeouts"
     files: ["07_javascript_node/11_error_handling.js", "08_javascript_web/11_error_handling.js"]
-    branch: "feature/phase03-sprint45-errors"
-    depends_on: [37]
+    branch: "feature/phase03-sprint48-errors"
+    depends_on: [39]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 10 unit tests pass (5 per stack)"]
 
-  - id: 46
+  - id: 49
     phase: phase_03
     name: "MTU Negotiation"
     files: ["07_javascript_node/12_mtu.js", "08_javascript_web/12_mtu.js"]
-    branch: "feature/phase03-sprint46-mtu"
-    depends_on: [37]
+    branch: "feature/phase03-sprint49-mtu"
+    depends_on: [39]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["platform behavior documented", "all 2 unit tests pass"]
 
-  - id: 47
+  - id: 50
     phase: phase_03
     name: "Bonding & Pairing"
     files: ["07_javascript_node/13_bonding_pairing.js", "08_javascript_web/13_bonding_pairing.js"]
-    branch: "feature/phase03-sprint47-pairing"
-    depends_on: [37]
+    branch: "feature/phase03-sprint50-pairing"
+    depends_on: [39]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["OS delegation documented for both stacks"]
 
-  - id: 48
+  - id: 51
     phase: phase_03
     name: "Peripheral Mode (Node.js) + Web stub"
     files: ["07_javascript_node/14_peripheral_mode.js", "08_javascript_web/14_peripheral_mode.js"]
-    branch: "feature/phase03-sprint48-peripheral"
-    depends_on: [37]
+    branch: "feature/phase03-sprint51-peripheral"
+    depends_on: [39]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass (mocked bleno)"]
 
-  - id: 49
+  - id: 52
     phase: phase_03
     name: "RSSI & Distance Estimation"
     files: ["07_javascript_node/15_rssi_distance.js", "08_javascript_web/15_rssi_distance.js"]
-    branch: "feature/phase03-sprint49-rssi"
-    depends_on: [35]
+    branch: "feature/phase03-sprint52-rssi"
+    depends_on: [37]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["formula matches Python reference", "all 3 unit tests pass"]
 
-  - id: 50
+  - id: 53
     phase: phase_03
     name: "Command Queue"
     files: ["07_javascript_node/16_command_queue.js", "08_javascript_web/16_command_queue.js"]
-    branch: "feature/phase03-sprint50-command-queue"
-    depends_on: [39]
+    branch: "feature/phase03-sprint53-command-queue"
+    depends_on: [41]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 5 unit tests pass"]
 
-  - id: 51
+  - id: 54
     phase: phase_03
     name: "OTA / DFU"
     files: ["07_javascript_node/17_ota_dfu.js", "08_javascript_web/17_ota_dfu.js"]
-    branch: "feature/phase03-sprint51-dfu"
-    depends_on: [39, 45, 50]
+    branch: "feature/phase03-sprint54-dfu"
+    depends_on: [41, 48, 53]
     status: not_started
     started_at: null
     completed_at: null
@@ -708,392 +762,422 @@ sprints:
   # PHASE 04 — Unity (abbreviated; see phase04 sprint file for full detail)
   # ─────────────────────────────────────────────
 
-  - id: 52
+  - id: 55
     phase: phase_04
     name: "C# Interface Definition"
     file: "02_unity_editor/Scripts/IBLEPlugin.cs"
-    branch: "feature/phase04-sprint52-cs-interface"
+    branch: "feature/phase04-sprint55-cs-interface"
     depends_on: []
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["interface compiles in Unity 2022.3 LTS", "all 3 unit tests pass"]
 
-  - id: 53
+  - id: 56
     phase: phase_04
     name: "BLEManager MonoBehaviour"
     file: "02_unity_editor/Scripts/BLEManager.cs"
-    branch: "feature/phase04-sprint53-ble-manager"
-    depends_on: [52]
+    branch: "feature/phase04-sprint56-ble-manager"
+    depends_on: [55]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["callbacks on main thread guaranteed", "all 3 unit tests pass"]
 
-  - id: 54
+  - id: 57
     phase: phase_04
     name: "Editor — Passive Scan"
     file: "02_unity_editor/Scripts/01_BLEScan.cs"
-    branch: "feature/phase04-sprint54-scan-editor"
-    depends_on: [53]
+    branch: "feature/phase04-sprint57-scan-editor"
+    depends_on: [56]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass"]
 
-  - id: 55
+  - id: 58
     phase: phase_04
     name: "Editor — Filtered Scan"
     file: "02_unity_editor/Scripts/02_BLEScanFiltered.cs"
-    branch: "feature/phase04-sprint55-filtered-scan-editor"
-    depends_on: [54]
+    branch: "feature/phase04-sprint58-filtered-scan-editor"
+    depends_on: [57]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["filter by UUID, name, RSSI all tested"]
 
-  - id: 56
+  - id: 59
     phase: phase_04
     name: "Editor — Connection Lifecycle"
     file: "02_unity_editor/Scripts/03_BLEConnection.cs"
-    branch: "feature/phase04-sprint56-connection-editor"
-    depends_on: [53]
+    branch: "feature/phase04-sprint59-connection-editor"
+    depends_on: [56]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["_intentionalDisconnect flag in place", "timeout via Coroutine"]
 
-  - id: 57
+  - id: 60
     phase: phase_04
     name: "Editor — Services & Characteristics"
     file: "02_unity_editor/Scripts/04_BLEServicesDiscovery.cs"
-    branch: "feature/phase04-sprint57-services-editor"
-    depends_on: [56]
+    branch: "feature/phase04-sprint60-services-editor"
+    depends_on: [59]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["two-step discovery chain correct"]
 
-  - id: 58
+  - id: 61
     phase: phase_04
     name: "Editor — Read & Write"
     file: "02_unity_editor/Scripts/05_BLEReadWrite.cs"
-    branch: "feature/phase04-sprint58-read-write-editor"
-    depends_on: [57]
+    branch: "feature/phase04-sprint61-read-write-editor"
+    depends_on: [60]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["byte order helpers tested"]
 
-  - id: 59
+  - id: 62
     phase: phase_04
     name: "Editor — Notifications"
     file: "02_unity_editor/Scripts/06_BLENotifications.cs"
-    branch: "feature/phase04-sprint59-notifications-editor"
-    depends_on: [58]
+    branch: "feature/phase04-sprint62-notifications-editor"
+    depends_on: [61]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["callback dispatched on main thread"]
 
-  - id: 60
+  - id: 63
     phase: phase_04
     name: "Editor — Scan Without Connection"
     file: "02_unity_editor/Scripts/07_BLEScanNoConnect.cs"
-    branch: "feature/phase04-sprint60-adv-data-editor"
-    depends_on: [55]
+    branch: "feature/phase04-sprint63-adv-data-editor"
+    depends_on: [58]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["manufacturer data and service data parsed"]
 
-  - id: 61
+  - id: 64
     phase: phase_04
     name: "Editor — Battery Level"
     file: "02_unity_editor/Scripts/08_BLEBattery.cs"
-    branch: "feature/phase04-sprint61-battery-editor"
-    depends_on: [58]
+    branch: "feature/phase04-sprint64-battery-editor"
+    depends_on: [61]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["-1 returned when service absent"]
 
-  - id: 62
+
+  - id: 65
+    phase: phase_04
+    name: "Editor — Device Information Service"
+    file: "02_unity_editor/Scripts/09_BLEDeviceInfo.cs"
+    branch: "feature/phase04-sprint65-device-info-editor"
+    depends_on: [61]
+    status: not_started
+    started_at: null
+    completed_at: null
+    notes: "Enables persistent device identification for multi-sensor setups in Unity."
+    acceptance_criteria:
+      - "DeviceInfo class with 5 nullable string fields"
+      - "returns null when DIS absent"
+      - "all 4 unit tests pass"
+  - id: 66
     phase: phase_04
     name: "Editor — Heart Rate Monitor"
     file: "02_unity_editor/Scripts/09_BLEHeartRate.cs"
-    branch: "feature/phase04-sprint62-heartrate-editor"
-    depends_on: [59, 61]
+    branch: "feature/phase04-sprint66-heartrate-editor"
+    depends_on: [62, 64]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["parser tested with hardcoded bytes"]
 
-  - id: 63
+  - id: 67
     phase: phase_04
     name: "Editor — Muse EEG"
     file: "02_unity_editor/Scripts/10_MuseEEG.cs"
-    branch: "feature/phase04-sprint63-muse-editor"
-    depends_on: [59, 61]
+    branch: "feature/phase04-sprint67-muse-editor"
+    depends_on: [62, 64]
     status: not_started
     started_at: null
     completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria:
       - "C# parser output matches Python reference for all test vectors"
 
-  - id: 64
+  - id: 68
     phase: phase_04
     name: "Editor — Error Handling"
     file: "02_unity_editor/Scripts/11_BLEErrors.cs"
-    branch: "feature/phase04-sprint64-errors-editor"
-    depends_on: [56]
+    branch: "feature/phase04-sprint68-errors-editor"
+    depends_on: [59]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["BLEException hierarchy correct", "retry works on coroutines"]
 
-  - id: 65
+  - id: 69
     phase: phase_04
     name: "Editor — MTU"
     file: "02_unity_editor/Scripts/12_BLEMTU.cs"
-    branch: "feature/phase04-sprint65-mtu-editor"
-    depends_on: [56]
+    branch: "feature/phase04-sprint69-mtu-editor"
+    depends_on: [59]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["WinRT cap documented"]
 
-  - id: 66
+  - id: 70
     phase: phase_04
     name: "Editor — Bonding & Pairing"
     file: "02_unity_editor/Scripts/13_BLEPairing.cs"
-    branch: "feature/phase04-sprint66-pairing-editor"
-    depends_on: [56]
+    branch: "feature/phase04-sprint70-pairing-editor"
+    depends_on: [59]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["OS delegation documented per platform"]
 
-  - id: 67
+  - id: 71
     phase: phase_04
     name: "Editor — Peripheral Mode"
     file: "02_unity_editor/Scripts/14_BLEPeripheral.cs"
-    branch: "feature/phase04-sprint67-peripheral-editor"
-    depends_on: [56]
+    branch: "feature/phase04-sprint71-peripheral-editor"
+    depends_on: [59]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["macOS limitation on WinRT documented"]
 
-  - id: 68
+  - id: 72
     phase: phase_04
     name: "Editor — RSSI, Command Queue, DFU"
     files:
       - "02_unity_editor/Scripts/15_BLERSSIDistance.cs"
       - "02_unity_editor/Scripts/16_BLECommandQueue.cs"
       - "02_unity_editor/Scripts/17_BLEDFU.cs"
-    branch: "feature/phase04-sprint68-advanced-editor"
-    depends_on: [58, 64]
+    branch: "feature/phase04-sprint72-advanced-editor"
+    depends_on: [61, 68]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["queue uses Coroutine", "DFU chunking correct"]
 
-  - id: 69
+  - id: 73
     phase: phase_04
     name: "Android/Quest — Permissions & Init"
     file: "03_unity_android_quest/AndroidPlugin/BLEAndroidPlugin.java"
-    branch: "feature/phase04-sprint69-android-init"
-    depends_on: [52]
+    branch: "feature/phase04-sprint73-android-init"
+    depends_on: [55]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["BLUETOOTH_SCAN with neverForLocation flag", "all 3 unit tests pass"]
 
-  - id: 70
+  - id: 74
     phase: phase_04
     name: "Android/Quest — Scan"
     file: "03_unity_android_quest/AndroidPlugin/BLEScan.java"
-    branch: "feature/phase04-sprint70-android-scan"
-    depends_on: [69]
+    branch: "feature/phase04-sprint74-android-scan"
+    depends_on: [73]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["ScanFilter used for UUID and name filters", "all 3 unit tests pass"]
 
-  - id: 71
+  - id: 75
     phase: phase_04
     name: "Android/Quest — Connection Lifecycle"
     file: "03_unity_android_quest/AndroidPlugin/BLEConnection.java"
-    branch: "feature/phase04-sprint71-android-connection"
-    depends_on: [69]
+    branch: "feature/phase04-sprint75-android-connection"
+    depends_on: [73]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["_intentionalDisconnect flag in place"]
 
-  - id: 72
+  - id: 76
     phase: phase_04
     name: "Android/Quest — GATT Operations"
     file: "03_unity_android_quest/AndroidPlugin/BLEGatt.java"
-    branch: "feature/phase04-sprint72-android-gatt"
-    depends_on: [71]
+    branch: "feature/phase04-sprint76-android-gatt"
+    depends_on: [75]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["CCCD descriptor write documented as Android-specific requirement"]
 
-  - id: 73
+
+  - id: 77
     phase: phase_04
-    name: "Android/Quest — Muse EEG"
-    file: "03_unity_android_quest/AndroidPlugin/MuseEEG.java"
-    branch: "feature/phase04-sprint73-android-muse"
-    depends_on: [72]
+    name: "Android/Quest — Device Information Service"
+    file: "03_unity_android_quest/AndroidPlugin/BLEDeviceInfo.java"
+    branch: "feature/phase04-sprint77-device-info-android"
+    depends_on: [76]
     status: not_started
     started_at: null
     completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    notes: "Java plugin layer for DIS — persistent device identification on Android/Quest."
+    acceptance_criteria:
+      - "DeviceInfo POJO with 5 nullable String fields"
+      - "returns null when DIS absent"
+      - "all 4 unit tests pass"
+  - id: 78
+    phase: phase_04
+    name: "Android/Quest — Muse EEG"
+    file: "03_unity_android_quest/AndroidPlugin/MuseEEG.java"
+    branch: "feature/phase04-sprint78-android-muse"
+    depends_on: [76]
+    status: not_started
+    started_at: null
+    completed_at: null
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria: ["Java parser output matches Python reference for all test vectors"]
 
-  - id: 74
+  - id: 79
     phase: phase_04
     name: "Android/Quest — Advanced (MTU, Pairing, Peripheral)"
     files:
       - "03_unity_android_quest/AndroidPlugin/BLEMTU.java"
       - "03_unity_android_quest/AndroidPlugin/BLEPairing.java"
       - "03_unity_android_quest/AndroidPlugin/BLEPeripheral.java"
-    branch: "feature/phase04-sprint74-android-advanced"
-    depends_on: [71]
+    branch: "feature/phase04-sprint79-android-advanced"
+    depends_on: [75]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["createBond() advantage over Python/JS documented"]
 
-  - id: 75
+  - id: 80
     phase: phase_04
     name: "Android/Quest — Command Queue, RSSI, DFU"
     files:
       - "03_unity_android_quest/AndroidPlugin/BLECommandQueue.java"
       - "03_unity_android_quest/AndroidPlugin/BLERSSIDistance.java"
       - "03_unity_android_quest/AndroidPlugin/BLEDFU.java"
-    branch: "feature/phase04-sprint75-android-advanced2"
-    depends_on: [72]
+    branch: "feature/phase04-sprint80-android-advanced2"
+    depends_on: [76]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["LinkedBlockingQueue used for serial execution"]
 
-  - id: 76
+  - id: 81
     phase: phase_04
     name: "Meta Quest Specific Configuration"
     file: "03_unity_android_quest/README.md"
-    branch: "feature/phase04-sprint76-quest-config"
-    depends_on: [69]
+    branch: "feature/phase04-sprint81-quest-config"
+    depends_on: [73]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["Quest idle/disconnect behavior documented", "all 2 unit tests pass"]
 
-  - id: 77
+  - id: 82
     phase: phase_04
     name: "macOS Plugin — Core Setup"
     file: "04_unity_mac/NativePlugin/BLEPluginMac.mm"
-    branch: "feature/phase04-sprint77-mac-setup"
-    depends_on: [52]
+    branch: "feature/phase04-sprint82-mac-setup"
+    depends_on: [55]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["C bridge functions match IBLEPlugin interface", "builds as .bundle"]
 
-  - id: 78
+  - id: 83
     phase: phase_04
     name: "macOS Plugin — Scan + Filter"
     file: "04_unity_mac/NativePlugin/BLEScan.mm"
-    branch: "feature/phase04-sprint78-mac-scan"
-    depends_on: [77]
+    branch: "feature/phase04-sprint83-mac-scan"
+    depends_on: [82]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["JSON serialization to UnitySendMessage correct"]
 
-  - id: 79
+  - id: 84
     phase: phase_04
     name: "macOS Plugin — Connection + GATT"
     file: "04_unity_mac/NativePlugin/BLEConnection.mm"
-    branch: "feature/phase04-sprint79-mac-connection"
-    depends_on: [77]
+    branch: "feature/phase04-sprint84-mac-connection"
+    depends_on: [82]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["_intentionalDisconnect flag in place"]
 
-  - id: 80
+  - id: 85
     phase: phase_04
     name: "macOS Plugin — Muse EEG"
     file: "04_unity_mac/NativePlugin/MuseEEG.mm"
-    branch: "feature/phase04-sprint80-mac-muse"
-    depends_on: [79]
+    branch: "feature/phase04-sprint85-mac-muse"
+    depends_on: [84]
     status: not_started
     started_at: null
     completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria: ["Obj-C parser output matches Python reference for all test vectors"]
 
-  - id: 81
+  - id: 86
     phase: phase_04
     name: "macOS Plugin — Advanced Features"
     file: "04_unity_mac/NativePlugin/"
-    branch: "feature/phase04-sprint81-mac-advanced"
-    depends_on: [79]
+    branch: "feature/phase04-sprint86-mac-advanced"
+    depends_on: [84]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["MTU, pairing, peripheral, RSSI, DFU all implemented"]
 
-  - id: 82
+  - id: 87
     phase: phase_04
     name: "iOS Plugin — Core Setup & Entitlements"
     file: "05_unity_ios/NativePlugin/BLEPluginIOS.mm"
-    branch: "feature/phase04-sprint82-ios-setup"
-    depends_on: [52]
+    branch: "feature/phase04-sprint87-ios-setup"
+    depends_on: [55]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["NSBluetoothAlwaysUsageDescription in Info.plist", "builds as .framework"]
 
-  - id: 83
+  - id: 88
     phase: phase_04
     name: "iOS Plugin — Background Mode"
     file: "05_unity_ios/NativePlugin/BLEBackground.mm"
-    branch: "feature/phase04-sprint83-ios-background"
-    depends_on: [82]
+    branch: "feature/phase04-sprint88-ios-background"
+    depends_on: [87]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["state restoration implemented", "background mode documented"]
 
-  - id: 84
+  - id: 89
     phase: phase_04
     name: "iOS Plugin — Muse EEG + Advanced"
     file: "05_unity_ios/NativePlugin/"
-    branch: "feature/phase04-sprint84-ios-muse"
-    depends_on: [83]
+    branch: "feature/phase04-sprint89-ios-muse"
+    depends_on: [88]
     status: not_started
     started_at: null
     completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria: ["iOS parser output matches Python reference for all test vectors"]
 
-  - id: 85
+  - id: 90
     phase: phase_04
     name: "Unity Integration Tests & Examples"
     files:
       - "Assets/BLELibrary/Examples/ScanExample.cs"
       - "Assets/BLELibrary/Examples/HRMExample.cs"
       - "Assets/BLELibrary/Examples/MuseExample.cs"
-    branch: "feature/phase04-sprint85-examples"
-    depends_on: [63, 73, 80, 84]
+    branch: "feature/phase04-sprint90-examples"
+    depends_on: [67, 78, 85, 89]
     status: not_started
     started_at: null
     completed_at: null
@@ -1103,191 +1187,206 @@ sprints:
   # PHASE 05 — C++ / SimpleBLE
   # ─────────────────────────────────────────────
 
-  - id: 86
+  - id: 91
     phase: phase_05
     name: "CMake Setup & Shared Utilities"
     files: ["06_cpp/CMakeLists.txt", "06_cpp/include/ble_utils.h", "06_cpp/src/ble_utils.cpp"]
-    branch: "feature/phase05-sprint86-setup"
+    branch: "feature/phase05-sprint91-setup"
     depends_on: []
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["builds on 2+ platforms", "all 7 unit tests pass"]
 
-  - id: 87
+  - id: 92
     phase: phase_05
     name: "Passive Scan"
     file: "06_cpp/src/01_scan.cpp"
-    branch: "feature/phase05-sprint87-passive-scan"
-    depends_on: [86]
+    branch: "feature/phase05-sprint92-passive-scan"
+    depends_on: [91]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["Safe API used throughout", "all 4 unit tests pass"]
 
-  - id: 88
+  - id: 93
     phase: phase_05
     name: "Filtered Scan"
     file: "06_cpp/src/02_scan_filtered.cpp"
-    branch: "feature/phase05-sprint88-filtered-scan"
-    depends_on: [87]
+    branch: "feature/phase05-sprint93-filtered-scan"
+    depends_on: [92]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["ble_utils UUID normalization used", "all 4 unit tests pass"]
 
-  - id: 89
+  - id: 94
     phase: phase_05
     name: "Connection Lifecycle"
     file: "06_cpp/src/03_connection.cpp"
-    branch: "feature/phase05-sprint89-connection"
-    depends_on: [87]
+    branch: "feature/phase05-sprint94-connection"
+    depends_on: [92]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["thread-safe disconnect flag", "all 5 unit tests pass"]
 
-  - id: 90
+  - id: 95
     phase: phase_05
     name: "Services & Characteristics Discovery"
     file: "06_cpp/src/04_services_characteristics.cpp"
-    branch: "feature/phase05-sprint90-services"
-    depends_on: [89]
+    branch: "feature/phase05-sprint95-services"
+    depends_on: [94]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass"]
 
-  - id: 91
+  - id: 96
     phase: phase_05
     name: "Read & Write"
     file: "06_cpp/src/05_read_write.cpp"
-    branch: "feature/phase05-sprint91-read-write"
-    depends_on: [90]
+    branch: "feature/phase05-sprint96-read-write"
+    depends_on: [95]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["write_request vs write_command distinction documented", "all 5 unit tests pass"]
 
-  - id: 92
+  - id: 97
     phase: phase_05
     name: "Notifications & Indications"
     file: "06_cpp/src/06_notifications.cpp"
-    branch: "feature/phase05-sprint92-notifications"
-    depends_on: [91]
+    branch: "feature/phase05-sprint97-notifications"
+    depends_on: [96]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["notify vs indicate distinction documented", "all 5 unit tests pass"]
 
-  - id: 93
+  - id: 98
     phase: phase_05
     name: "Scan Without Connection"
     file: "06_cpp/src/07_scan_without_connect.cpp"
-    branch: "feature/phase05-sprint93-adv-data"
-    depends_on: [88]
+    branch: "feature/phase05-sprint98-adv-data"
+    depends_on: [93]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass"]
 
-  - id: 94
+  - id: 99
     phase: phase_05
     name: "Battery Level"
     file: "06_cpp/src/08_battery.cpp"
-    branch: "feature/phase05-sprint94-battery"
-    depends_on: [91]
+    branch: "feature/phase05-sprint99-battery"
+    depends_on: [96]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["std::nullopt when service absent", "all 3 unit tests pass"]
 
-  - id: 95
+
+  - id: 100
+    phase: phase_05
+    name: "Device Information Service"
+    file: "06_cpp/src/09_device_info.cpp"
+    branch: "feature/phase05-sprint100-device-info"
+    depends_on: [95, 96]
+    status: not_started
+    started_at: null
+    completed_at: null
+    notes: "Enables persistent device identification for multi-sensor setups."
+    acceptance_criteria:
+      - "DeviceInfo struct with 5 std::optional<std::string> fields"
+      - "returns std::nullopt when DIS absent"
+      - "all 4 unit tests pass"
+  - id: 101
     phase: phase_05
     name: "Heart Rate Monitor Example"
     file: "06_cpp/src/09_heartrate_example.cpp"
-    branch: "feature/phase05-sprint95-heartrate"
-    depends_on: [92, 94]
+    branch: "feature/phase05-sprint101-heartrate"
+    depends_on: [97, 99]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["parser tested with same byte sequences as Python reference"]
 
-  - id: 96
+  - id: 102
     phase: phase_05
     name: "Muse EEG Example"
     file: "06_cpp/src/10_muse_example.cpp"
-    branch: "feature/phase05-sprint96-muse"
-    depends_on: [92, 94]
+    branch: "feature/phase05-sprint102-muse"
+    depends_on: [97, 99]
     status: not_started
     started_at: null
     completed_at: null
-    notes: "Cross-validate against sprint 10 (Python) using muse_test_vectors.json"
+    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
     acceptance_criteria:
       - "C++ parser output matches Python reference for all test vectors"
       - "all 6 unit tests pass"
 
-  - id: 97
+  - id: 103
     phase: phase_05
     name: "Error Handling & Timeouts"
     file: "06_cpp/src/11_error_handling.cpp"
-    branch: "feature/phase05-sprint97-errors"
-    depends_on: [89]
+    branch: "feature/phase05-sprint103-errors"
+    depends_on: [94]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass"]
 
-  - id: 98
+  - id: 104
     phase: phase_05
     name: "MTU Negotiation"
     file: "06_cpp/src/12_mtu_negotiation.cpp"
-    branch: "feature/phase05-sprint98-mtu"
-    depends_on: [89]
+    branch: "feature/phase05-sprint104-mtu"
+    depends_on: [94]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["BlueZ requestMtu documented as Linux advantage", "all 2 unit tests pass"]
 
-  - id: 99
+  - id: 105
     phase: phase_05
     name: "Bonding & Pairing"
     file: "06_cpp/src/13_bonding_pairing.cpp"
-    branch: "feature/phase05-sprint99-pairing"
-    depends_on: [89]
+    branch: "feature/phase05-sprint105-pairing"
+    depends_on: [94]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["Linux full programmatic bonding documented as advantage", "all 3 unit tests pass"]
 
-  - id: 100
+  - id: 106
     phase: phase_05
     name: "Peripheral Mode"
     file: "06_cpp/src/14_peripheral_mode.cpp"
-    branch: "feature/phase05-sprint100-peripheral"
-    depends_on: [89]
+    branch: "feature/phase05-sprint106-peripheral"
+    depends_on: [94]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["all 3 unit tests pass"]
 
-  - id: 101
+  - id: 107
     phase: phase_05
     name: "RSSI & Command Queue"
     files: ["06_cpp/src/15_rssi_distance.cpp", "06_cpp/src/16_command_queue.cpp"]
-    branch: "feature/phase05-sprint101-rssi-queue"
-    depends_on: [87, 91]
+    branch: "feature/phase05-sprint107-rssi-queue"
+    depends_on: [92, 96]
     status: not_started
     started_at: null
     completed_at: null
     acceptance_criteria: ["std::future used for queue results", "all tests pass"]
 
-  - id: 102
+  - id: 108
     phase: phase_05
     name: "OTA / DFU"
     file: "06_cpp/src/17_ota_dfu.cpp"
-    branch: "feature/phase05-sprint102-dfu"
-    depends_on: [91, 97, 101]
+    branch: "feature/phase05-sprint108-dfu"
+    depends_on: [96, 103, 107]
     status: not_started
     started_at: null
     completed_at: null
