@@ -65,7 +65,7 @@ final class MuseTestRunner {
 
             // ── Step 2: Connect ──
             logger.log(.info, "Step 02 — Connecting...")
-            connector = BLEConnector()
+            connector = BLEConnector(centralManager: scanner!.centralManager)
             try await connector!.connect(to: cbPeripheral, timeout: 10.0)
             logger.log(.success, "Connected")
 

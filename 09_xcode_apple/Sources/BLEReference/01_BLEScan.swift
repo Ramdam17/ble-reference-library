@@ -115,7 +115,11 @@ public final class BLEScanner: NSObject {
 
     // MARK: - Properties
 
-    private let centralManager: CBCentralManager
+    /// The underlying CBCentralManager. Exposed so that other modules
+    /// (e.g. BLEConnector) can reuse the same central manager instance,
+    /// which is required because CBPeripheral objects are tied to the
+    /// CBCentralManager that discovered them.
+    public let centralManager: CBCentralManager
     private let queue: DispatchQueue
     private let logger = Logger(
         subsystem: "com.ble-reference",

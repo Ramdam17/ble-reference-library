@@ -160,12 +160,28 @@ public final class BLEConnector: NSObject {
 
     // MARK: - Init
 
-    /// Creates a new BLE connector.
+    /// Creates a new BLE connector with its own CBCentralManager.
     ///
     /// - Parameter queue: Dispatch queue for CoreBluetooth callbacks.
     public init(queue: DispatchQueue = DispatchQueue(label: "com.ble-reference.connector")) {
         self.queue = queue
         self.centralManager = CBCentralManager(delegate: nil, queue: queue)
+        super.init()
+        self.centralManager.delegate = self
+    }
+
+    /// Creates a BLE connector reusing an existing CBCentralManager.
+    ///
+    /// Use this when you need to connect to a peripheral discovered
+    /// by a BLEScanner — CoreBluetooth requires the same
+    /// CBCentralManager that discovered a peripheral to connect to it.
+    ///
+    /// - Parameters:
+    ///   - centralManager: The CBCentralManager from the scanner.
+    ///   - queue: Dispatch queue (should match the central manager's queue).
+    public init(centralManager: CBCentralManager, queue: DispatchQueue = DispatchQueue(label: "com.ble-reference.connector")) {
+        self.queue = queue
+        self.centralManager = centralManager
         super.init()
         self.centralManager.delegate = self
     }

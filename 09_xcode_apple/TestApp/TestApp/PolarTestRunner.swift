@@ -46,7 +46,10 @@ final class PolarTestRunner {
             // ── Step 1: Scan ──
             logger.log(.info, "Step 01 — Scanning for Polar H10...")
             scanner = BLEScanner()
-            let devices = try await scanner!.scan(duration: 10.0)
+            let devices = try await scanner!.scan(
+                duration: 10.0,
+                serviceUUIDs: [kHeartRateServiceUUID, kPolarPMDServiceUUID]
+            )
             let filter = ScanFilter.byName("Polar H10")
             let filtered = filter.apply(to: devices)
 
@@ -66,7 +69,7 @@ final class PolarTestRunner {
 
             // ── Step 2: Connect ──
             logger.log(.info, "Step 02 — Connecting...")
-            connector = BLEConnector()
+            connector = BLEConnector(centralManager: scanner!.centralManager)
             try await connector!.connect(to: cbPeripheral, timeout: 10.0)
             logger.log(.success, "Connected")
 
