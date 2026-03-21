@@ -149,7 +149,9 @@ final class PolarTestRunner {
             }
 
             // Write start command to control point
+            // write() steals peripheral.delegate — restore to subscriber after
             try await readWriter!.write(kPolarEcgStartCommand, to: pmdControlChar, on: cbPeripheral)
+            cbPeripheral.delegate = subscriber
             logger.log(.success, "ECG streaming started (130 Hz)")
 
             // ── Step 8: Stream for 30s ──
@@ -160,6 +162,8 @@ final class PolarTestRunner {
             // ── Step 9: Stop and disconnect ──
             logger.log(.info, "Step 09 — Stopping ECG and disconnecting...")
             try? await readWriter!.write(kPolarEcgStopCommand, to: pmdControlChar, on: cbPeripheral)
+            // Restore delegate to subscriber for unsubscribe callbacks
+            cbPeripheral.delegate = subscriber
             try? await subscriber!.unsubscribe(from: pmdDataChar, on: cbPeripheral)
             try? await subscriber!.unsubscribe(from: hrmChar, on: cbPeripheral)
             await connector!.disconnect()
