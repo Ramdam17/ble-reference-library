@@ -5,12 +5,19 @@ struct ECGChartView: View {
     let samplesUv: [Int]
     let sampleRate: Double
 
+    /// Skip the first 2 seconds to avoid PMD startup drift.
+    private let skipSeconds: Double = 2.0
+
     private var dataPoints: [ECGDataPoint] {
-        samplesUv.enumerated().map { index, uv in
-            ECGDataPoint(
+        let skipSamples = Int(skipSeconds * sampleRate)
+        guard samplesUv.count > skipSamples else { return [] }
+        let trimmed = samplesUv.dropFirst(skipSamples)
+        return trimmed.enumerated().map { index, uv in
+            let clamped = max(-1500, min(1500, uv))
+            return ECGDataPoint(
                 id: index,
                 time: Double(index) / sampleRate,
-                uv: Double(uv)
+                uv: Double(clamped)
             )
         }
     }
