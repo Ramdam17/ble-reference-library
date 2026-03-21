@@ -217,9 +217,10 @@ sprints:
     file: "01_python_bleak/11_muse_example.py"
     test_file: "01_python_bleak/test_11_muse_example.py"
     branch: "feature/phase01-sprint11-muse"
-    depends_on: [3, 6, 8]
-    status: not_started
-    started_at: null
+    depends_on: [3, 6, 8, 9]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     completed_at: null
     notes: "CANONICAL REFERENCE for Muse parser. All other platforms cross-validate against this."
     acceptance_criteria:
