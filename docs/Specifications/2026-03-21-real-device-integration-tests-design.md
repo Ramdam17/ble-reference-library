@@ -51,31 +51,55 @@ The TestApp imports `BLEReference` as a **local package dependency** (Xcode: Fil
 
 **Minimum platforms:** iOS 16.0 / macOS 13.0 (required for SwiftUI Charts + `ImageRenderer`).
 
+> **Note:** The BLEReference library (`Package.swift`) declares `.iOS(.v15)` / `.macOS(.v12)` as its minimum. The TestApp's higher deployment target (iOS 16 / macOS 13) is intentional — it only affects the TestApp, not the library. **Do NOT bump `Package.swift` platforms** — the library must remain compatible with iOS 15+.
+
+> **Note:** The `.xcodeproj` lives inside the Swift Package directory alongside `Package.swift`. This is valid — `swift test` ignores `.xcodeproj` and only uses `Package.swift`. The TestApp is a separate Xcode project that references the package as a local dependency, not part of the package itself.
+
 ---
 
 ## 4. Polar H10 Test Flow (PolarTestRunner)
 
-Mirrors `01_python_bleak/10_heartrate_example.py` steps 1–11:
+Mirrors `01_python_bleak/10_heartrate_example.py` steps 1–11.
 
-| Step | Operation | BLEReference module used |
-|------|-----------|--------------------------|
+### Swift type mapping
+
+| Spec name | Swift type | Source file |
+|-----------|-----------|-------------|
+| `BLEScanner` | `BLEScanner` (class) | `01_BLEScan.swift` |
+| `ScanFilter` | `ScanFilter` (struct) | `02_BLEScanFiltered.swift` |
+| `BLEConnector` | `BLEConnector` (class) | `03_BLEConnection.swift` |
+| `BLEServiceDiscoverer` | `BLEServiceDiscoverer` (class) | `04_BLEServicesDiscovery.swift` |
+| `BLEReadWriter` | `BLEReadWriter` (class) | `05_BLEReadWrite.swift` |
+| `BLENotificationSubscriber` | `BLENotificationSubscriber` (class) | `06_BLENotifications.swift` |
+| `BLEBattery` | `BLEBattery` (enum, static methods) | `08_BLEBattery.swift` |
+| `BLEDeviceInfo` | `BLEDeviceInfo` (enum, static methods) | `09_BLEDeviceInfo.swift` |
+| `HeartRateParser` | `HeartRateParser` (enum, static methods) | `10_BLEHeartRate.swift` |
+| `PolarEcgParser` | `PolarEcgParser` (enum, static methods) | `10_BLEHeartRate.swift` |
+| `MuseEegParser` | `MuseEegParser` (enum, static methods) | `11_MuseEEG.swift` |
+
+### Test steps
+
+| Step | Operation | Swift types used |
+|------|-----------|------------------|
 | 1 | Scan for "Polar H10" (timeout 10s) | `BLEScanner` + `ScanFilter.byName()` |
 | 2 | Connect | `BLEConnector` |
 | 3 | Discover services | `BLEServiceDiscoverer` |
 | 4 | Read device info (serial, model, firmware) | `BLEDeviceInfo` |
 | 5 | Read battery level | `BLEBattery` |
 | 6 | Subscribe HRM notifications (0x2A37) | `BLENotificationSubscriber` + `HeartRateParser` |
-| 7 | Start PMD ECG stream (write control point) | `BLEReadWriter` + `PolarEcgParser` |
+| 7 | Start PMD ECG stream (write PMD control point) | `BLEReadWriter` + `PolarEcgParser` |
 | 8 | Stream 30 seconds — accumulate ECG frames | `PolarEcgParser.parse()` |
 | 9 | Stop streaming, disconnect | `BLEConnector.disconnect()` |
 | 10 | Plot ECG with SwiftUI Charts, export PNG | `ECGChartView` + `ChartExporter` |
 | 11 | Log summary (frames, samples, duration, µV stats) | `TestLogger` |
 
+> **PMD protocol details:** The exact PMD control point UUID, data UUID, and START/STOP byte sequences are defined in `10_BLEHeartRate.swift` (constants `kPMDControlPointUUID`, `kPMDDataUUID`, `kPMDStartECGCommand`). See also the Python reference: `01_python_bleak/10_heartrate_example.py`.
+
 **Outputs:**
 - `ecg_plot_<timestamp>.png` — saved to app's Documents directory
 - Structured log displayed in UI + exportable
 
-**Pass criteria:** ≥ 3000 ECG samples in 30s (~130 Hz × 30s = 3900 expected), PNG generated with visible signal.
+**Pass criteria:** ≥ 3000 ECG samples in 30s (~130 Hz × 30s = 3900 expected), PNG generated with visible signal (std dev of ECG signal > 10 µV).
 
 ---
 
@@ -83,8 +107,8 @@ Mirrors `01_python_bleak/10_heartrate_example.py` steps 1–11:
 
 Mirrors `01_python_bleak/11_muse_example.py` steps 1–11:
 
-| Step | Operation | BLEReference module used |
-|------|-----------|--------------------------|
+| Step | Operation | Swift types used |
+|------|-----------|------------------|
 | 1 | Scan for "Muse" (timeout 10s) | `BLEScanner` + `ScanFilter.byName()` |
 | 2 | Connect | `BLEConnector` |
 | 3 | Discover services | `BLEServiceDiscoverer` |
@@ -97,11 +121,13 @@ Mirrors `01_python_bleak/11_muse_example.py` steps 1–11:
 | 10 | Plot 4-channel EEG, export PNG | `EEGChartView` + `ChartExporter` |
 | 11 | Log summary (packets, samples/ch, duration, amplitude) | `TestLogger` |
 
+> **Muse protocol details:** The Muse GATT service UUID, channel characteristic UUIDs, and handshake byte sequences (ASK `0x01 0x01 ...`, STREAM start `0x02 0x64 0x0A`) are defined in `11_MuseEEG.swift` (constants `kMuseServiceUUID`, `kMuseEegTP9UUID`, etc.). See also the Python reference: `01_python_bleak/11_muse_example.py`.
+
 **Outputs:**
 - `eeg_plot_<timestamp>.png` — saved to app's Documents directory
 - Structured log displayed in UI + exportable
 
-**Pass criteria:** ≥ 3000 samples per channel in 15s (~256 Hz × 15s = 3840 expected), 4 channels visible on PNG.
+**Pass criteria:** ≥ 3000 samples per channel in 15s (~256 Hz × 15s = 3840 expected), 4 channels visible on PNG (std dev per channel > 5 µV).
 
 ---
 
@@ -130,12 +156,14 @@ This protocol applies to **every phase** of the BLE Reference Library. A separat
 1. Connection succeeds
 2. Service discovery finds expected services
 3. Sample count above minimum threshold
-4. PNG generated, signal visible (not a flat line)
+4. PNG generated with valid signal: ECG std dev > 10 µV, EEG std dev > 5 µV per channel
 5. Clean disconnect (no crash)
 
 ### 6.4 Phase Mapping
 
-| Phase | Polar Sprint | Muse Sprint | Plot Technology |
+Sprint numbers reference `SPRINT_TRACKER.yaml` IDs. Each phase's Heart Rate sprint is the 10th module (file `10_*`), Muse is the 11th (file `11_*`). The sprint ID = phase start offset + file number - 1.
+
+| Phase | Polar Sprint (tracker ID) | Muse Sprint (tracker ID) | Plot Technology |
 |---|---|---|---|
 | 01 Python/Bleak | Sprint 10 | Sprint 11 | matplotlib PNG |
 | 02 Swift/CoreBluetooth | Sprint 28 | Sprint 29 | SwiftUI Charts PNG |
@@ -151,13 +179,16 @@ This protocol applies to **every phase** of the BLE Reference Library. A separat
 
 ## 7. Sprint Tracker Impact
 
-### Phase 02 corrections needed
+Sprints 28–36 are currently marked "done" based on unit tests (code is correct). The **code** status stays "done" — the unit tests validate the parsers and APIs. The integration test gate applies at the **phase level**: Phase 02 is not considered fully validated until the TestApp produces the required PNG + log artifacts for both Polar and Muse.
 
-Sprints 28–29 are currently marked "done" but lack real-device validation. They must be reverted to "in_progress" until the TestApp produces the required artifacts.
+**Action:** Add a `phase_integration_gate` field to Phase 02 in the tracker:
 
-Sprints 30–36 (Errors, MTU, Pairing, Peripheral, RSSI, Queue, DFU) were marked "done" based on unit tests alone. Per the gate rule, they cannot be "done" until Sprints 28–29 pass real-device validation. They should be reverted to "blocked_by_integration".
-
-**Pragmatic approach:** Keep unit-test-validated sprints as "done" for the code, but add a tracker-level note that Phase 02 real-device gate is pending. The TestApp work is a separate deliverable.
+```yaml
+phase_integration_gate:
+  status: pending
+  polar_artifacts: null    # will be set to file paths when produced
+  muse_artifacts: null
+```
 
 ---
 
