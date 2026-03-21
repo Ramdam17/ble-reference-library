@@ -185,9 +185,9 @@ sprints:
     test_file: "01_python_bleak/test_09_device_info.py"
     branch: "feature/phase01-sprint9-device-info"
     depends_on: [4, 5]
-    status: in_progress
+    status: done
     started_at: "2026-03-20"
-    completed_at: null
+    completed_at: "2026-03-20"
     notes: "NEW SPRINT — inserted for multi-sensor identification (hyperscanning). Enables persistent device ID on macOS/iOS where MAC addresses are hidden."
     acceptance_criteria:
       - "DeviceInfo dataclass with 5 optional string fields"
@@ -202,10 +202,10 @@ sprints:
     file: "01_python_bleak/10_heartrate_example.py"
     test_file: "01_python_bleak/test_10_heartrate_example.py"
     branch: "feature/phase01-sprint10-heartrate"
-    depends_on: [3, 5, 6, 8]
-    status: not_started
-    started_at: null
-    completed_at: null
+    depends_on: [3, 5, 6, 8, 9]
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "parser handles UINT8 and UINT16 BPM modes"
       - "RR intervals converted to seconds correctly"
