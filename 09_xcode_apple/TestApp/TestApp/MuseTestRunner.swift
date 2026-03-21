@@ -77,7 +77,8 @@ final class MuseTestRunner {
 
             // ── Step 4: Device info ──
             logger.log(.info, "Step 04 — Reading device info...")
-            if let info = BLEDeviceInfo.read(on: cbPeripheral) {
+            readWriter = BLEReadWriter()
+            if let info = await BLEDeviceInfo.read(on: cbPeripheral, using: readWriter!) {
                 logger.log(.success, "Model: \(info.modelNumber ?? "n/a")")
             } else {
                 logger.log(.info, "DIS not available (expected for Muse)")
@@ -85,7 +86,7 @@ final class MuseTestRunner {
 
             // ── Step 5: Battery ──
             logger.log(.info, "Step 05 — Reading battery...")
-            if let battery = BLEBattery.readLevel(on: cbPeripheral) {
+            if let battery = await BLEBattery.readLevel(on: cbPeripheral, using: readWriter!) {
                 logger.log(.success, "Battery: \(battery)%")
             } else {
                 logger.log(.info, "Battery service not available")
@@ -93,7 +94,6 @@ final class MuseTestRunner {
 
             // ── Step 6: Handshake ──
             logger.log(.info, "Step 06 — Muse handshake (ASK + STREAM)...")
-            readWriter = BLEReadWriter()
             guard let controlChar = findCharacteristic(kMuseControlUUID, in: cbPeripheral) else {
                 logger.log(.error, "Muse control characteristic not found")
                 stop()

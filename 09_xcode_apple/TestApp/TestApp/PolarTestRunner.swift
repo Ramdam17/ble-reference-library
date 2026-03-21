@@ -84,7 +84,8 @@ final class PolarTestRunner {
 
             // ── Step 4: Device info ──
             logger.log(.info, "Step 04 — Reading device info...")
-            if let info = BLEDeviceInfo.read(on: cbPeripheral) {
+            readWriter = BLEReadWriter()
+            if let info = await BLEDeviceInfo.read(on: cbPeripheral, using: readWriter!) {
                 logger.log(.success, "Manufacturer: \(info.manufacturerName ?? "n/a")")
                 logger.log(.data, "  Model: \(info.modelNumber ?? "n/a")")
                 logger.log(.data, "  Serial: \(info.serialNumber ?? "n/a")")
@@ -95,7 +96,7 @@ final class PolarTestRunner {
 
             // ── Step 5: Battery ──
             logger.log(.info, "Step 05 — Reading battery...")
-            if let battery = BLEBattery.readLevel(on: cbPeripheral) {
+            if let battery = await BLEBattery.readLevel(on: cbPeripheral, using: readWriter!) {
                 logger.log(.success, "Battery: \(battery)%")
             } else {
                 logger.log(.info, "Battery service not available")
@@ -103,7 +104,6 @@ final class PolarTestRunner {
 
             // ── Step 6: Subscribe HRM ──
             logger.log(.info, "Step 06 — Subscribing to Heart Rate...")
-            readWriter = BLEReadWriter()
             subscriber = BLENotificationSubscriber()
 
             // Find the HRM characteristic

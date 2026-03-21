@@ -58,18 +58,31 @@ public enum BLEBattery {
 
     /// Read the battery level percentage.
     ///
-    /// - Parameter peripheral: A connected peripheral with discovered
-    ///   services and characteristics.
+    /// CoreBluetooth does not pre-populate `characteristic.value`
+    /// during discovery — the value must be explicitly read via
+    /// `peripheral.readValue(for:)`.
     ///
+    /// - Parameters:
+    ///   - peripheral: A connected peripheral with discovered
+    ///     services and characteristics.
+    ///   - readWriter: A `BLEReadWriter` to perform the read.
     /// - Returns: Battery level (0–100), or `nil` if Battery Service
     ///   is not present on this device.
-    public static func readLevel(on peripheral: CBPeripheral) -> Int? {
+    public static func readLevel(
+        on peripheral: CBPeripheral,
+        using readWriter: BLEReadWriter
+    ) async -> Int? {
         guard let service = peripheral.services?.first(where: { $0.uuid == kBatteryServiceUUID }),
-              let char = service.characteristics?.first(where: { $0.uuid == kBatteryLevelUUID }),
-              let value = char.value,
-              let level = value.first
+              let char = service.characteristics?.first(where: { $0.uuid == kBatteryLevelUUID })
         else {
             logger.info("Battery Service not available")
+            return nil
+        }
+
+        guard let data = try? await readWriter.read(char, on: peripheral),
+              let level = data.first
+        else {
+            logger.info("Battery level read failed")
             return nil
         }
 

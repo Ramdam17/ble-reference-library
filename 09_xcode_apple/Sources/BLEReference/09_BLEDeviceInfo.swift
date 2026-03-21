@@ -81,10 +81,20 @@ public enum BLEDeviceInfo {
 
     /// Read all DIS characteristics.
     ///
-    /// - Parameter peripheral: A connected peripheral with discovered
-    ///   services and characteristics.
+    /// CoreBluetooth does not pre-populate `characteristic.value`
+    /// during discovery — each value must be explicitly read via
+    /// `peripheral.readValue(for:)`. This method uses a
+    /// `BLEReadWriter` to perform the async reads.
+    ///
+    /// - Parameters:
+    ///   - peripheral: A connected peripheral with discovered
+    ///     services and characteristics.
+    ///   - readWriter: A `BLEReadWriter` to perform the reads.
     /// - Returns: `DeviceInfo` if DIS is present, `nil` otherwise.
-    public static func read(on peripheral: CBPeripheral) -> DeviceInfo? {
+    public static func read(
+        on peripheral: CBPeripheral,
+        using readWriter: BLEReadWriter
+    ) async -> DeviceInfo? {
         guard let service = peripheral.services?.first(where: { $0.uuid == kDISServiceUUID }) else {
             logger.info("Device Information Service not available")
             return nil
@@ -92,18 +102,18 @@ public enum BLEDeviceInfo {
 
         let chars = service.characteristics ?? []
 
-        func stringValue(for uuid: CBUUID) -> String? {
-            guard let char = chars.first(where: { $0.uuid == uuid }),
-                  let data = char.value else { return nil }
+        func readString(for uuid: CBUUID) async -> String? {
+            guard let char = chars.first(where: { $0.uuid == uuid }) else { return nil }
+            guard let data = try? await readWriter.read(char, on: peripheral) else { return nil }
             return String(data: data, encoding: .utf8)
         }
 
         let info = DeviceInfo(
-            serialNumber: stringValue(for: kSerialNumberUUID),
-            modelNumber: stringValue(for: kModelNumberUUID),
-            firmwareRevision: stringValue(for: kFirmwareRevisionUUID),
-            hardwareRevision: stringValue(for: kHardwareRevisionUUID),
-            manufacturerName: stringValue(for: kManufacturerNameUUID)
+            serialNumber: await readString(for: kSerialNumberUUID),
+            modelNumber: await readString(for: kModelNumberUUID),
+            firmwareRevision: await readString(for: kFirmwareRevisionUUID),
+            hardwareRevision: await readString(for: kHardwareRevisionUUID),
+            manufacturerName: await readString(for: kManufacturerNameUUID)
         )
 
         logger.info("Device: \(info.identifier ?? "Unknown")")
