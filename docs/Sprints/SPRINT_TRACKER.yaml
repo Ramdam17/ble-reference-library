@@ -130,8 +130,8 @@ sprints:
     test_file: "01_python_bleak/test_05_read_write.py"
     branch: "feature/phase01-sprint05-read-write"
     depends_on: [4]
-    status: not_started
-    started_at: null
+    status: in_progress
+    started_at: "2026-03-20"
     completed_at: null
     acceptance_criteria:
       - "property validation raises ValueError for non-readable/writable chars"
