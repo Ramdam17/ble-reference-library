@@ -249,9 +249,9 @@ sprints:
     test_file: "01_python_bleak/test_13_mtu_negotiation.py"
     branch: "feature/phase01-sprint13-mtu"
     depends_on: [3]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: done
+    started_at: "2026-03-20"
+    completed_at: "2026-03-20"
     acceptance_criteria:
       - "platform behavior documented per OS"
       - "all 3 unit tests pass"
