@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ─────────────────────────────────────────────────────────────────────────────
+  BLE Reference Library
+  Module  : AndroidManifest.xml — Unity Project Root Manifest
+  Platform: Android phones + Meta Quest 2 / 3 / Pro
+  Sprint  : Sprint 81
+  Phase   : Phase 04 — Unity / Android / Quest
+
+  PLACEMENT IN UNITY PROJECT:
+    Assets/Plugins/Android/AndroidManifest.xml
+
+    This is the AUTHORITATIVE manifest for the Unity project root. It is NOT
+    the same as AndroidPlugin/AndroidManifest.xml, which is the manifest merged
+    into the aar plugin at library build time.
+
+    Unity's Gradle build merges all manifests from:
+      1. The Unity engine default manifest
+      2. Assets/Plugins/Android/AndroidManifest.xml  ← this file
+      3. Each .aar library's embedded manifest
+
+    If merger conflicts arise (e.g., duplicate activity declarations), use
+    tools:replace or tools:merge attributes from the Android manifest merger
+    documentation:
+      https://developer.android.com/build/manage-manifests
+
+  PLATFORM COVERAGE:
+    ┌─────────────────────────────┬─────────────────────────────────────────┐
+    │ Platform                    │ API Level / Notes                       │
+    ├─────────────────────────────┼─────────────────────────────────────────┤
+    │ Android phones (min)        │ API 26 (Android 8.0 Oreo)               │
+    │ Android phones (target)     │ API 33 (Android 13)                     │
+    │ Meta Quest 2                │ API 29 internally; Quest OS 50+ → 32+   │
+    │ Meta Quest 3                │ API 33 internally                       │
+    │ Meta Quest Pro              │ API 32 internally                       │
+    └─────────────────────────────┴─────────────────────────────────────────┘
+
+  META QUEST AND BLE — KEY FACTS:
+    Quest devices run Android. The standard android.bluetooth.* API works
+    identically on Quest as on any Android phone. There is NO separate
+    Oculus/Meta SDK required for BLE operations.
+
+    Quest-specific manifest additions in this file:
+      1. android.hardware.vr.headtracking — categorises the app for the Quest
+         store and enables Quest's tracking pipeline. Required for apps
+         distributed via the Meta Horizon Store.
+      2. The CATEGORY_VR_HOME intent filter — marks the app as a VR
+         experience. Omit if building a 2D (pancake) Android app for Quest.
+
+    BLE permissions on Quest:
+      Quest 2 / Pro ship with OS builds in the API 29–32 range (varies by
+      firmware). Quest 3 ships at API 33. All modern Quest firmware (2024+)
+      runs API 32+, meaning:
+        - BLUETOOTH_SCAN + BLUETOOTH_CONNECT (API 31+ model) are always used.
+        - ACCESS_FINE_LOCATION is NOT required for BLE on Quest.
+        - No location permission dialog is shown to the user.
+
+  BLE PERMISSION HISTORY:
+    API ≤ 30 (Android ≤ 11)  — Legacy model:
+      BLUETOOTH + BLUETOOTH_ADMIN (install-time, no prompt)
+      ACCESS_FINE_LOCATION (runtime prompt required for scanning)
+
+    API 31+ (Android 12 / Quest modern) — Purpose-specific model:
+      BLUETOOTH_SCAN     (runtime prompt: "Allow to find nearby devices")
+      BLUETOOTH_CONNECT  (runtime prompt: "Allow to connect to nearby devices")
+      No location permission needed if neverForLocation is declared on SCAN.
+
+  KEY REFERENCES:
+    https://developer.android.com/guide/topics/connectivity/bluetooth/permissions
+    https://developer.android.com/reference/android/Manifest.permission#BLUETOOTH_SCAN
+    https://developer.oculus.com/documentation/native/android/mobile-native-manifest/
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.bleref.unity">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 1 — Legacy BLE permissions (API ≤ 30 / Android ≤ 11)
+         ═══════════════════════════════════════════════════════════════════════
+
+         These permissions are only active on Android 11 and below.
+         maxSdkVersion="30" prevents them from being requested on Android 12+,
+         where the newer BLUETOOTH_SCAN / BLUETOOTH_CONNECT model applies.
+
+         On Quest, you will almost never encounter these API levels in practice.
+         They are included for completeness and for Android phone compatibility.
+    -->
+
+    <!-- BLUETOOTH: allows the app to connect to Bluetooth devices.
+         Install-time permission — no runtime dialog on API ≤ 30. -->
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+
+    <!-- BLUETOOTH_ADMIN: allows discovery initiation and adapter configuration.
+         Required to call startLeScan() / startDiscovery() on API ≤ 30.
+         Install-time permission — no runtime dialog on API ≤ 30. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+
+    <!-- ACCESS_FINE_LOCATION: required to start BLE scans on API ≤ 30.
+         Runtime permission — the user sees a dialog.
+         The OS required location because BLE beacon data can be used to
+         triangulate the user's physical position. On API 31+ this is replaced
+         by the dedicated BLUETOOTH_SCAN permission (see Section 2). -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- ACCESS_COARSE_LOCATION: supplemental fallback for coarse location
+         acceptance on API ≤ 30. In practice FINE is needed for BLE scan;
+         COARSE is declared here for completeness and for apps that degrade
+         gracefully when fine location is denied. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="30" />
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 2 — Modern BLE permissions (API 31+ / Android 12+ / Quest)
+         ═══════════════════════════════════════════════════════════════════════
+
+         Android 12 (API 31) introduced purpose-specific Bluetooth permissions.
+         Both are runtime permissions: the user sees a system dialog per entry.
+
+         tools:targetApi="s" suppresses linter warnings about attributes that
+         are only valid at API "S" (= API 31, Android 12 codename "Snow Cone").
+    -->
+
+    <!-- BLUETOOTH_SCAN: required to start and stop BLE device scans, and to
+         read discovered device names/addresses from scan results.
+
+         usesPermissionFlags="neverForLocation":
+           This critical flag declares that this application does NOT use BLE
+           scan results to infer the user's physical location. Without it,
+           Android 12+ may still require ACCESS_FINE_LOCATION in addition to
+           BLUETOOTH_SCAN — defeating the purpose of the new permission model.
+
+           Effect of neverForLocation:
+             1. ACCESS_FINE_LOCATION is not required for BLE scanning on API 31+.
+             2. The system permission dialog reads "Allow to find nearby devices"
+                rather than "Allow to access your location."
+             3. If the app attempts to access location-bearing scan data (e.g.,
+                raw BLE address on certain API surfaces), the OS throws a
+                SecurityException at runtime — enforcing the declaration.
+
+           This library uses BLE exclusively for device connectivity (ECG/EEG
+           data streaming). neverForLocation is accurate and mandatory. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <!-- BLUETOOTH_CONNECT: required to connect to a BLE peripheral, read its
+         GATT services and characteristics, enable notifications, and send or
+         receive data over BLE.
+
+         Also required (as of API 31) to read the human-readable device name
+         via BluetoothDevice.getName() — without BLUETOOTH_CONNECT, this
+         returns null even after a successful scan.
+
+         BLUETOOTH_SCAN and BLUETOOTH_CONNECT are independent grants.
+         Both are needed for the full scan → connect → stream workflow. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"
+        tools:targetApi="s" />
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 3 — Hardware Feature Declarations
+         ═══════════════════════════════════════════════════════════════════════
+    -->
+
+    <!-- android.hardware.bluetooth_le: declares that BLE hardware is required.
+         required="true": Google Play and the Meta Horizon Store will filter out
+           devices/headsets without BLE capability. Quest 2, 3, and Pro all have
+           BLE hardware, so this is safe for Quest-targeted builds.
+         If you need graceful degradation (app runs without BLE, showing a
+           "feature unavailable" message), set required="false" and check at
+           runtime with PackageManager.hasSystemFeature(FEATURE_BLUETOOTH_LE).
+           BLEAndroidPlugin.initialize() already performs this defensive check. -->
+    <uses-feature android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <!-- android.hardware.vr.headtracking: marks this app as a VR experience
+         for the Meta Horizon Store categorization pipeline. Quest needs this
+         to enable 6DoF head tracking and to display the app in the VR section
+         of the store. It has NO effect on Android phone builds.
+
+         required="false": this allows the same APK to be installed on Android
+         phones (which lack VR head tracking) and Quest devices. The app will
+         behave as a normal 2D Android app on phones and as a VR app on Quest.
+         Set required="true" only if the app is exclusively Quest-targeted. -->
+    <uses-feature android:name="android.hardware.vr.headtracking"
+        android:required="false" />
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 4 — Application
+         ═══════════════════════════════════════════════════════════════════════
+
+         Unity generates its own <application> block. This file's <application>
+         entry is merged with Unity's by the Android manifest merger tool.
+
+         tools:replace="android:icon,android:theme,android:label": overrides
+           Unity's defaults with app-specific values. Adjust or remove as needed.
+         android:hardwareAccelerated="true": required for Unity's renderer.
+         android:extractNativeLibs="true": required by older ARMv7 builds;
+           harmless on ARM64. Set to "false" for smaller APK sizes on API 23+
+           if you are exclusively targeting 64-bit (Quest 2+, API 29+).
+    -->
+    <application
+        android:label="BLE Reference"
+        android:icon="@drawable/app_icon"
+        android:theme="@style/UnityThemeSelector"
+        android:hardwareAccelerated="true"
+        android:extractNativeLibs="true"
+        tools:replace="android:icon,android:theme,android:label">
+
+        <!-- ── Unity Main Activity ─────────────────────────────────────────
+             Unity's default activity class. Replace "com.unity3d.player.UnityPlayerActivity"
+             with your custom subclass if you override onRequestPermissionsResult
+             to forward results to BLEAndroidPlugin.onRequestPermissionsResult().
+             See BLEAndroidPlugin.java for the required wiring.
+
+             android:configChanges: Unity requires this exact list so that
+               configuration changes (orientation, keyboard, etc.) do not
+               destroy and recreate the Activity — which would terminate BLE
+               connections. Do not reduce this list.
+
+             android:screenOrientation: Quest ignores this; Android phones
+               will respect it. "fullSensor" allows all orientations.
+               Change to "landscape" or "portrait" as needed.
+
+             android:launchMode="singleTask": ensures only one Unity Activity
+               instance is running at a time, preventing duplicate BLE stacks.
+        -->
+        <activity
+            android:name="com.unity3d.player.UnityPlayerActivity"
+            android:label="BLE Reference"
+            android:screenOrientation="fullSensor"
+            android:launchMode="singleTask"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density"
+            android:exported="true">
+
+            <!-- MAIN launcher intent — makes this the app entry point. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- ── Meta Quest VR intent filter ──────────────────────────────
+                 CATEGORY_VR_HOME marks this activity as a VR experience.
+                 Without this, the app appears in the Quest "2D section"
+                 (App Library → Unknown Sources) rather than the VR library.
+                 Remove if building a 2D ("pancake") Android app for Quest.
+
+                 android.intent.action.MAIN with CATEGORY_VR_HOME is how the
+                 Quest home environment launches the app in VR mode.
+                 Reference: Meta Horizon Developer Documentation — Android
+                 Manifest for VR Apps.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.oculus.intent.category.VR" />
+            </intent-filter>
+
+            <!-- ── Deep link intent filter (optional) ────────────────────────
+                 Allows the app to be launched from a URI, e.g. from the Meta
+                 companion app or from another app on the headset.
+                 Remove this block if you do not need URI-based launch.
+            -->
+            <!-- Uncomment to enable deep link:
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="bleref" />
+            </intent-filter>
+            -->
+
+        </activity>
+
+    </application>
+
+</manifest>
