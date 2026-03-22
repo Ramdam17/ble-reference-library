@@ -105,11 +105,9 @@ import android.os.Build;
 import android.util.Log;
 
 // ─── AndroidX Permission Helpers ─────────────────────────────────────────────
-// AndroidX replaces the old android.support.v4 library. These helpers are
-// required for runtime permission checks and requests on API 23+.
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+// Runtime permissions: use direct Android API (Context.checkSelfPermission,
+// Activity.requestPermissions) — available from API 23+. Our minSdk is 26,
+// so no AndroidX wrappers needed. This keeps the plugin dependency-free.
 
 // ─── Unity Bridge Import ──────────────────────────────────────────────────────
 // UnityPlayer is provided by the Unity Android runtime (classes.jar / aar).
@@ -351,13 +349,11 @@ public class BLEAndroidPlugin {
             // ── API 31+ (Android 12+): Check BLUETOOTH_SCAN + BLUETOOTH_CONNECT ──
             // Both must be granted for full BLE operation. BLUETOOTH_SCAN is
             // needed even just to check device names during scan results.
-            boolean hasScan = ContextCompat.checkSelfPermission(
-                context,
+            boolean hasScan = context.checkSelfPermission(
                 android.Manifest.permission.BLUETOOTH_SCAN
             ) == PackageManager.PERMISSION_GRANTED;
 
-            boolean hasConnect = ContextCompat.checkSelfPermission(
-                context,
+            boolean hasConnect = context.checkSelfPermission(
                 android.Manifest.permission.BLUETOOTH_CONNECT
             ) == PackageManager.PERMISSION_GRANTED;
 
@@ -369,8 +365,7 @@ public class BLEAndroidPlugin {
             // On these versions, BLE scanning requires fine location permission.
             // BLUETOOTH and BLUETOOTH_ADMIN are install-time and don't need
             // a runtime check here.
-            boolean hasLocation = ContextCompat.checkSelfPermission(
-                context,
+            boolean hasLocation = context.checkSelfPermission(
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED;
 
@@ -424,11 +419,10 @@ public class BLEAndroidPlugin {
             Log.d(TAG, "Requesting API < 31 BLE permission: ACCESS_FINE_LOCATION");
         }
 
-        // ActivityCompat.requestPermissions triggers the system permission dialog.
+        // Activity.requestPermissions (API 23+) triggers the system permission dialog.
         // The result is delivered to the Activity's onRequestPermissionsResult callback,
         // which must forward it to this plugin's onRequestPermissionsResult() method.
-        ActivityCompat.requestPermissions(
-            UnityPlayer.currentActivity,
+        UnityPlayer.currentActivity.requestPermissions(
             permissions,
             REQUEST_BLE_PERMISSIONS
         );

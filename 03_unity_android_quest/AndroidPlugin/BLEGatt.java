@@ -239,9 +239,6 @@ import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
-// ─── AndroidX Annotation ─────────────────────────────────────────────────────
-
-import androidx.annotation.RequiresApi;
 
 // ─── Java Standard Library ───────────────────────────────────────────────────
 
@@ -360,11 +357,9 @@ public class BLEGatt {
         // as a byte[] parameter, avoiding the thread-safety issue of the old form
         // where you had to call characteristic.getValue() inside the callback.
         //
-        // @RequiresApi ensures this override is only compiled/linked on API 33+.
-        // The runtime dispatches to this form on modern devices; older devices
+        // The runtime dispatches to this form on API 33+ devices; older devices
         // use the deprecated two-parameter form below.
 
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         @Override
         public void onCharacteristicRead(
                 BluetoothGatt gatt,
@@ -502,7 +497,6 @@ public class BLEGatt {
         // Same deprecation story as onCharacteristicRead.
         // The new API 33 form passes value directly; the old form uses getValue().
 
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         @Override
         public void onCharacteristicChanged(
                 BluetoothGatt gatt,
