@@ -27,7 +27,8 @@ This guide covers integrating the BLE Reference Library Android plugin into a Un
 | Android SDK | API 33 (Android 13) — installed by Unity Hub or Android Studio |
 | Android NDK | Bundled with Unity; required for IL2CPP builds |
 | Java JDK | 11 (required by Unity 2022+). Java 17 works; avoid Java 8 |
-| Android Studio | Flamingo (2022.2) or newer — needed to compile the .aar |
+
+> **Android Studio n'est pas nécessaire.** Unity compile les fichiers `.java` directement lors du build Android — pas besoin de pré-compiler en `.aar`.
 | Meta Quest device | Quest 2, 3, or Pro. Developer Mode must be enabled (see Section 4) |
 | ADB | Included with Android Studio platform-tools |
 
@@ -122,20 +123,29 @@ Assets/
         └── OculusPermissions.cs
 ```
 
-#### 3.3 — Java plugin (.aar or source)
+#### 3.3 — Java plugin (fichiers source directement)
 
-The Java files in `AndroidPlugin/` must be compiled into a `.aar` before Unity can use them. See [Section 5](#5-building-the-aar-plugin) for build instructions.
-
-Once compiled, place the `.aar` at:
+Copier tous les fichiers `.java` depuis `AndroidPlugin/` vers :
 
 ```
 Assets/
 └── Plugins/
     └── Android/
-        └── BLEAndroidPlugin.aar
+        ├── BLEAndroidPlugin.java
+        ├── BLEScan.java
+        ├── BLEConnection.java
+        ├── BLEGatt.java
+        ├── BLEDeviceInfo.java
+        ├── MuseEEG.java
+        ├── BLEMTU.java
+        ├── BLEPairing.java
+        ├── BLEPeripheral.java
+        ├── BLECommandQueue.java
+        ├── BLERSSIDistance.java
+        └── BLEDFU.java
 ```
 
-Unity automatically includes `.aar` files found in `Assets/Plugins/Android/`.
+Unity détecte automatiquement les fichiers `.java` dans `Assets/Plugins/Android/` et les compile lors du build Android. **Aucune étape de compilation séparée n'est nécessaire.**
 
 #### 3.4 — C# scripts from Phase 02 (if applicable)
 

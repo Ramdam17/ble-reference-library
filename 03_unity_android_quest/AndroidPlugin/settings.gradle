@@ -1,6 +1,0 @@
-// =============================================================================
-// BLE Reference Library — Gradle Settings
-// Module  : AndroidPlugin (root / single-module project)
-// =============================================================================
-
-rootProject.name = "BLEAndroidPlugin"

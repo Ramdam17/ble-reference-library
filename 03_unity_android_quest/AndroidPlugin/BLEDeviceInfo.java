@@ -137,9 +137,6 @@ import android.bluetooth.BluetoothGattService;
 import android.os.Build;
 import android.util.Log;
 
-// ─── AndroidX Annotation ─────────────────────────────────────────────────────
-
-import androidx.annotation.RequiresApi;
 
 // ─── Java Standard Library ───────────────────────────────────────────────────
 
@@ -493,7 +490,6 @@ public class BLEDeviceInfo {
             // See BLEGatt.java for a detailed explanation of why Android API 33
             // introduced this new form and why both must be implemented.
 
-            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             @Override
             public void onCharacteristicRead(
                     BluetoothGatt g,

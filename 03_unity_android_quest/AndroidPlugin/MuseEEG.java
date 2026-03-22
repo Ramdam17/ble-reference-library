@@ -245,9 +245,6 @@ import android.bluetooth.BluetoothGattService;
 import android.os.Build;
 import android.util.Log;
 
-// ─── AndroidX Annotation ─────────────────────────────────────────────────────
-
-import androidx.annotation.RequiresApi;
 
 // ─── Java Standard Library ───────────────────────────────────────────────────
 
@@ -914,7 +911,6 @@ public class MuseEEG {
         // API 33 introduced a value-passing form to fix the thread-safety issue
         // in characteristic.getValue(). See BLEGatt.java for full explanation.
 
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         @Override
         public void onCharacteristicChanged(
                 BluetoothGatt g,
