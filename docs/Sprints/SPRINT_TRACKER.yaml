@@ -45,11 +45,11 @@ phases:
     folders: ["08_javascript_web"]
     sprint_range: [37, 54]
     git_tag: "phase03-complete"
-    status: in_progress
+    status: complete
     phase_integration_gate:
-      status: pending
-      polar_artifacts: null
-      muse_artifacts: null
+      status: done
+      polar_artifacts: "TestApp/polar-runner.js (30s ECG, Polar H10, Chrome macOS, 2026-03-22)"
+      muse_artifacts: "TestApp/muse-runner.js (15s EEG 4ch, Muse 2, Chrome macOS, 2026-03-22)"
 
   - id: phase_04
     name: "Unity (Editor · Android/Quest · Mac · iOS)"

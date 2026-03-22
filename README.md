@@ -4,20 +4,19 @@ A multi-platform Bluetooth Low Energy reference library — standalone, heavily 
 
 ## What This Is
 
-A collection of **self-contained BLE implementation files** covering 17 features across 5 platforms. Each file is a standalone tutorial: no imports between modules, no framework magic. Copy what you need, adapt it, ship it.
+A collection of **self-contained BLE implementation files** covering 18 features across 5 platforms. Each file is a standalone tutorial: no imports between modules, no framework magic. Copy what you need, adapt it, ship it.
 
 **This is not a framework.** It's a knowledge base.
 
 ## Platforms
 
-| Folder | Language | Library / Framework | Phase |
-|--------|----------|---------------------|-------|
-| `01_python_bleak/` | Python 3.14+ | Bleak 0.21+ | 01 |
-| `09_xcode_apple/` | Swift 5.9+ | CoreBluetooth | 02 |
-| `07_javascript_node/` | Node.js 18+ | @abandonware/noble | 03 |
-| `08_javascript_web/` | Browser JS | Web Bluetooth API | 03 |
-| `02–05_unity_*/` | C# / Unity 2022.3 | IBLEPlugin + native | 04 |
-| `06_cpp/` | C++17 | SimpleBLE 0.7+ | 05 |
+| Folder | Language | Library / Framework | Phase | Status |
+|--------|----------|---------------------|-------|--------|
+| `01_python_bleak/` | Python 3.12+ | Bleak 0.21+ | 01 | ✅ Complete |
+| `09_xcode_apple/` | Swift 5.9+ | CoreBluetooth | 02 | ✅ Complete |
+| `08_javascript_web/` | TypeScript / Browser | Web Bluetooth API | 03 | ✅ Complete |
+| `02–05_unity_*/` | C# / Unity 2022.3 | IBLEPlugin + native | 04 | 🔜 Planned |
+| `06_cpp/` | C++17 | SimpleBLE 0.7+ | 05 | 🔜 Planned |
 
 ## Features (per platform)
 
@@ -31,15 +30,16 @@ A collection of **self-contained BLE implementation files** covering 17 features
 | 06 | Notifications & Indications | Subscribe to characteristic changes |
 | 07 | Scan Without Connection | Parse advertisement data |
 | 08 | Battery Level | Standard Battery Service (0x180F) |
-| 09 | Heart Rate Monitor | Standard Heart Rate Service (0x180D) |
-| 10 | Muse EEG Example | Custom BLE service, uint:12 bit-unpacking |
-| 11 | Error Handling & Timeouts | Retry logic, timeout management |
-| 12 | MTU Negotiation | Request and handle MTU changes |
-| 13 | Bonding & Pairing | Secure pairing and key storage |
-| 14 | Peripheral Mode | Advertise as a BLE peripheral |
-| 15 | RSSI & Distance | Signal strength and distance estimation |
-| 16 | Command Queue | Serial GATT operation scheduling |
-| 17 | OTA / DFU | Over-the-air firmware updates |
+| 09 | Device Information | Device Information Service (0x180A) — serial, model, firmware |
+| 10 | Heart Rate + ECG | HRM (0x180D) + Polar PMD proprietary ECG stream |
+| 11 | Muse EEG | Custom BLE service, uint:12 bit-unpacking, 4-channel EEG |
+| 12 | Error Handling & Timeouts | Retry logic, timeout management |
+| 13 | MTU Negotiation | Request and handle MTU changes |
+| 14 | Bonding & Pairing | Secure pairing and key storage |
+| 15 | Peripheral Mode | Advertise as a BLE peripheral |
+| 16 | RSSI & Distance | Signal strength and distance estimation |
+| 17 | Command Queue | Serial GATT operation scheduling |
+| 18 | OTA / DFU | Over-the-air firmware updates |
 
 ## Architecture
 
@@ -51,30 +51,51 @@ A collection of **self-contained BLE implementation files** covering 17 features
 
 ```
 ├── 00_shared/              # BLE concepts, GATT reference, test vectors
-├── 01_python_bleak/        # Python reference implementation
-├── 02–05_unity_*/          # Unity (Editor, Android/Quest, Mac, iOS)
-├── 06_cpp/                 # C++ / SimpleBLE
-├── 07_javascript_node/     # Node.js / noble
-├── 08_javascript_web/      # Web Bluetooth API
-├── 09_xcode_apple/         # Swift / CoreBluetooth (iOS, macOS, iPadOS)
-├── docs/                   # Specifications and sprint plans
+├── 01_python_bleak/        # Phase 01 — Python / Bleak
+├── 02–05_unity_*/          # Phase 04 — Unity (Editor, Android/Quest, Mac, iOS)
+├── 06_cpp/                 # Phase 05 — C++ / SimpleBLE
+├── 08_javascript_web/      # Phase 03 — TypeScript / Web Bluetooth API
+├── 09_xcode_apple/         # Phase 02 — Swift / CoreBluetooth (iOS, macOS, iPadOS)
+├── docs/                   # Specifications, sprint plans, reference docs
 └── tests/                  # Test suites (mirrors module structure)
 ```
 
-## Getting Started (Python)
+## Getting Started
+
+### Phase 01 — Python
 
 ```bash
-# Clone and install
-git clone git@github.com:Ramdam17/ble-reference-library.git
-cd ble-reference-library
 uv sync --extra dev
-
-# Run tests
 uv run pytest tests/ -v
-
-# Try a scan
 uv run python 01_python_bleak/01_scan.py
 ```
+
+### Phase 02 — Swift
+
+```bash
+cd 09_xcode_apple
+swift test
+# TestApp: open TestApp/TestApp.xcodeproj in Xcode → run on iPhone/Mac
+```
+
+### Phase 03 — Web Bluetooth (TypeScript)
+
+```bash
+cd 08_javascript_web
+npm install
+npm test              # 50 tests
+npm run build         # → dist/
+npx serve .           # Serve TestApp
+# Open http://localhost:3000/TestApp/ in Chrome
+```
+
+## Reference Documentation
+
+| Phase | Reference | Problems & Solutions |
+|-------|-----------|---------------------|
+| 01 Python / Bleak | [phase01-reference.md](docs/phase01-reference.md) | [phase01-problems-and-solutions.md](docs/phase01-problems-and-solutions.md) |
+| 02 Swift / CoreBluetooth | [phase02-reference.md](docs/phase02-reference.md) | [phase02-problems-and-solutions.md](docs/phase02-problems-and-solutions.md) |
+| 03 Web Bluetooth (TS) | [phase03-reference.md](docs/phase03-reference.md) | [phase03-problems-and-solutions.md](docs/phase03-problems-and-solutions.md) |
 
 ## Development
 
