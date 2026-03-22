@@ -147,25 +147,27 @@ window.runPolar = async function () {
   try {
     // ── Step 1: Scan ───────────────────────────────────────────────────────
     log("Step 1: Scanning for Polar H10...");
-    const filter = ScanFilter.byName("Polar H10").withOptionalServices([
+    const filter = ScanFilter.byName("Polar H10").withOptionalServices(
       HEART_RATE_SERVICE_UUID,
       "battery_service",
       "device_information",
       POLAR_PMD_SERVICE_UUID,
-      POLAR_PMD_CONTROL_UUID,
       POLAR_PMD_DATA_UUID,
-    ]);
-    const scanResult = await BLEScanner.requestDevice(filter);
+    );
+    const scanner = new BLEScanner();
+    const scanResult = await scanner.requestDevice(filter.toRequestDeviceOptions());
     log(`  Found device: ${scanResult.device.name} (id: ${scanResult.device.id})`);
 
     // ── Step 2: Connect ────────────────────────────────────────────────────
     log("Step 2: Connecting...");
-    server = await BLEConnector.connect(scanResult.device);
+    const connector = new BLEConnector();
+    server = await connector.connect(scanResult.device);
     log("  Connected.");
 
     // ── Step 3: Discover services ──────────────────────────────────────────
     log("Step 3: Discovering services...");
-    const services = await BLEServiceDiscoverer.discoverAll(server);
+    const discoverer = new BLEServiceDiscoverer();
+    const services = await discoverer.discoverAll(server);
     log(`  Discovered ${services.length} service(s): ${services.map((s) => s.uuid).join(", ")}`);
 
     // ── Step 4: Read device info ───────────────────────────────────────────
@@ -192,7 +194,8 @@ window.runPolar = async function () {
     log("Step 6: Subscribing to HRM (0x2A37)...");
     const hrmService = await server.getPrimaryService(HEART_RATE_SERVICE_UUID);
     const hrmChar = await hrmService.getCharacteristic("heart_rate_measurement");
-    const unsubHrm = await BLENotificationSubscriber.subscribe(hrmChar, (dv) => {
+    const subscriber = new BLENotificationSubscriber();
+    await subscriber.subscribe(hrmChar, (dv) => {
       const hrm = HeartRateParser.parse(dv);
       if (hrm) {
         hrmCount++;
@@ -211,7 +214,7 @@ window.runPolar = async function () {
 
     // Subscribe to PMD data notifications before sending START to avoid
     // missing early packets.
-    const unsubPmd = await BLENotificationSubscriber.subscribe(pmdData, (dv) => {
+    await subscriber.subscribe(pmdData, (dv) => {
       const frame = PolarEcgParser.parse(dv);
       if (frame) {
         allSamplesUv.push(...frame.samplesUv);
@@ -234,8 +237,7 @@ window.runPolar = async function () {
     } catch (e) {
       log(`  STOP command error (non-fatal): ${e.message}`);
     }
-    unsubPmd();
-    unsubHrm();
+    await subscriber.unsubscribeAll([hrmChar, pmdData]);
     server.disconnect();
     log("  Disconnected.");
 

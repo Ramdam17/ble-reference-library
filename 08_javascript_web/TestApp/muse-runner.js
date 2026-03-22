@@ -146,29 +146,28 @@ window.runMuse = async function () {
   const channelData = Object.fromEntries(MUSE_CHANNEL_NAMES.map((ch) => [ch, []]));
   const packetCounts = Object.fromEntries(MUSE_CHANNEL_NAMES.map((ch) => [ch, 0]));
 
-  // Track unsubscribe functions so we can clean up
-  const unsubFns = [];
+  // Track subscribed characteristics so we can clean up
+  const subscribedChars = [];
+  const subscriber = new BLENotificationSubscriber();
 
   try {
     // ── Step 1: Scan ───────────────────────────────────────────────────────
     log("Step 1: Scanning for Muse 2...");
-    const optionalServices = [
-      MUSE_SERVICE_UUID,
-      MUSE_CONTROL_UUID,
-      ...Object.values(MUSE_EEG_CHANNEL_UUIDS),
-    ];
-    const filter = ScanFilter.byNamePrefix("Muse").withOptionalServices(optionalServices);
-    const scanResult = await BLEScanner.requestDevice(filter);
+    const filter = ScanFilter.byNamePrefix("Muse").withOptionalServices(MUSE_SERVICE_UUID);
+    const scanner = new BLEScanner();
+    const scanResult = await scanner.requestDevice(filter.toRequestDeviceOptions());
     log(`  Found device: ${scanResult.device.name} (id: ${scanResult.device.id})`);
 
     // ── Step 2: Connect ────────────────────────────────────────────────────
     log("Step 2: Connecting...");
-    server = await BLEConnector.connect(scanResult.device);
+    const connector = new BLEConnector();
+    server = await connector.connect(scanResult.device);
     log("  Connected.");
 
     // ── Step 3: Discover services ──────────────────────────────────────────
     log("Step 3: Discovering services...");
-    const services = await BLEServiceDiscoverer.discoverAll(server);
+    const discoverer = new BLEServiceDiscoverer();
+    const services = await discoverer.discoverAll(server);
     log(`  Discovered ${services.length} service(s): ${services.map((s) => s.uuid).join(", ")}`);
 
     // ── Step 4: Read device info ───────────────────────────────────────────
@@ -203,14 +202,14 @@ window.runMuse = async function () {
     for (const chName of MUSE_CHANNEL_NAMES) {
       const uuid = MUSE_EEG_CHANNEL_UUIDS[chName];
       const char = await museService.getCharacteristic(uuid);
-      const unsub = await BLENotificationSubscriber.subscribe(char, (dv) => {
+      await subscriber.subscribe(char, (dv) => {
         const packet = MuseEegParser.parse(dv, chName);
         if (packet) {
           channelData[chName].push(...packet.samplesUv);
           packetCounts[chName]++;
         }
       });
-      unsubFns.push(unsub);
+      subscribedChars.push(char);
       log(`  Subscribed: ${chName} (${uuid})`);
     }
 
@@ -234,9 +233,7 @@ window.runMuse = async function () {
     } catch (e) {
       log(`  STOP command error (non-fatal): ${e.message}`);
     }
-    for (const unsub of unsubFns) {
-      try { unsub(); } catch (_) { /* ignore */ }
-    }
+    await subscriber.unsubscribeAll(subscribedChars);
     server.disconnect();
     log("  Disconnected.");
 
@@ -256,8 +253,8 @@ window.runMuse = async function () {
   } catch (err) {
     log(`ERROR: ${err.message ?? err}`);
     console.error("[muse-runner]", err);
-    for (const unsub of unsubFns) {
-      try { unsub(); } catch (_) { /* ignore */ }
+    if (subscribedChars.length > 0) {
+      try { await subscriber.unsubscribeAll(subscribedChars); } catch (_) { /* ignore */ }
     }
     if (server && server.connected) {
       server.disconnect();
