@@ -48,7 +48,7 @@ Sprint numbers reference `SPRINT_TRACKER.yaml` IDs.
 |-------|----------|-------------|-------------|-----------------|
 | 01 | Python / Bleak | Sprint 10 | Sprint 11 | matplotlib |
 | 02 | Swift / CoreBluetooth | Sprint 28 | Sprint 29 | SwiftUI Charts |
-| 03 | JavaScript / Web Bluetooth | Sprint 46 | Sprint 47 | Chart.js |
+| 03 | Web Bluetooth (TypeScript) | Sprint 46 | Sprint 47 | Chart.js canvas PNG |
 | 04 | Unity / C# | Sprint 64 | Sprint 65 | Unity UI |
 | 05 | C++ / SimpleBLE | Sprint 82 | Sprint 83 | matplotlibcpp |
 
