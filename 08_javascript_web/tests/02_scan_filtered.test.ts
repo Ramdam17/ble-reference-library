@@ -21,3 +21,12 @@ test("acceptAll produces acceptAllDevices: true", () => {
   const opts = ScanFilter.acceptAll().toRequestDeviceOptions();
   expect(opts.acceptAllDevices).toBe(true);
 });
+
+test("withOptionalServices adds additional service UUIDs", () => {
+  const opts = ScanFilter.byServiceUUID("180D")
+    .withOptionalServices("180A", "180B")
+    .toRequestDeviceOptions();
+  expect((opts.optionalServices as string[])).toContain("180D");
+  expect((opts.optionalServices as string[])).toContain("180A");
+  expect((opts.optionalServices as string[])).toContain("180B");
+});

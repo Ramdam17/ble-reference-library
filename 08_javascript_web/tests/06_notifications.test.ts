@@ -32,3 +32,27 @@ test("unsubscribe stops notifications", async () => {
   expect(char.stopNotifications).toHaveBeenCalled();
   expect(char.removeEventListener).toHaveBeenCalled();
 });
+
+test("unsubscribeAll unsubscribes from multiple characteristics", async () => {
+  const sub = new BLENotificationSubscriber();
+  const char1 = makeChar("2a37");
+  const char2 = makeChar("2a38");
+  await sub.subscribe(char1 as any, () => {});
+  await sub.subscribe(char2 as any, () => {});
+  await sub.unsubscribeAll([char1 as any, char2 as any]);
+  expect(char1.stopNotifications).toHaveBeenCalled();
+  expect(char2.stopNotifications).toHaveBeenCalled();
+});
+
+test("activeSubscriptionCount tracks active subscriptions", async () => {
+  const sub = new BLENotificationSubscriber();
+  const char1 = makeChar("2a37");
+  const char2 = makeChar("2a38");
+  expect(sub.activeSubscriptionCount).toBe(0);
+  await sub.subscribe(char1 as any, () => {});
+  expect(sub.activeSubscriptionCount).toBe(1);
+  await sub.subscribe(char2 as any, () => {});
+  expect(sub.activeSubscriptionCount).toBe(2);
+  await sub.unsubscribe(char1 as any);
+  expect(sub.activeSubscriptionCount).toBe(1);
+});
