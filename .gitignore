@@ -19,6 +19,10 @@ node_modules/
 package-lock.json
 yarn.lock
 
+# JavaScript / Web Bluetooth
+08_javascript_web/dist/
+08_javascript_web/node_modules/
+
 # === Unity ===
 Library/
 Temp/
