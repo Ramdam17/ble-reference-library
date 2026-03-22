@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- NUnit test framework -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.6.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Include source files from 02_unity_editor (no UnityEngine dependency needed for DTOs/interface) -->
+  <ItemGroup>
+    <Compile Include="../../02_unity_editor/Scripts/Data/BLEDevice.cs" />
+    <Compile Include="../../02_unity_editor/Scripts/Data/BLECharacteristic.cs" />
+    <Compile Include="../../02_unity_editor/Scripts/Data/BLEError.cs" />
+    <Compile Include="../../02_unity_editor/Scripts/IBLEPlugin.cs" />
+    <!-- BLEManager.cs is NOT included: it depends on UnityEngine (MonoBehaviour, Debug, etc.) -->
+  </ItemGroup>
+</Project>
