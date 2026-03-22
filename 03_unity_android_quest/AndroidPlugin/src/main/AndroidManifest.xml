@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Minimal library manifest for the Gradle AAR build.
+  The full BLE permission declarations live in the top-level
+  AndroidPlugin/AndroidManifest.xml, which is the file intended
+  for Unity's Assets/Plugins/Android/ merge path.
+
+  This manifest satisfies Android Gradle's requirement that every
+  library module declares a manifest. It intentionally contains no
+  permissions or components — those are in the Unity-facing manifest.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

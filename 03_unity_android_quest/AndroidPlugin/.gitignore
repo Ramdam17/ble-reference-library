@@ -1,0 +1,18 @@
+# =============================================================================
+# BLE Reference Library — AndroidPlugin .gitignore
+# =============================================================================
+
+# Gradle build outputs
+build/
+.gradle/
+
+# Android Studio project files
+.idea/
+*.iml
+local.properties
+
+# Unity-classes jar — licensed to your Unity installation, not redistributed
+libs/*.jar
+
+# Keep the libs directory placeholder
+!libs/.gitkeep

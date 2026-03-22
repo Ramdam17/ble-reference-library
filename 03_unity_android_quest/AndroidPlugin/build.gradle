@@ -1,0 +1,112 @@
+// =============================================================================
+// BLE Reference Library — Android AAR Build Script
+// Module  : AndroidPlugin
+// Platform: Android / Unity Plugin
+// Phase   : Phase 04 — Unity / Android / Quest
+//
+// PURPOSE
+// -------
+// Compiles all Java source files under src/main/java/com/bleref/unity/ into
+// a release .aar that Unity imports under Assets/Plugins/Android/.
+//
+// QUICK-START (two-step setup)
+// ----------------------------
+// Step 1 — Copy unity-classes.jar into libs/:
+//   The Unity engine ships a classes.jar that provides UnityPlayer.UnitySendMessage
+//   and other runtime symbols our plugin calls. The jar is NOT redistributed here
+//   because it is licensed to your Unity installation.
+//
+//   Locate it at one of these paths (adjust the version number):
+//     macOS  : /Applications/Unity/Hub/Editor/2022.3.xx/PlaybackEngines/
+//                AndroidPlayer/Variations/mono/Release/Classes/classes.jar
+//     Windows: C:\Program Files\Unity\Hub\Editor\2022.3.xx\Editor\Data\
+//                PlaybackEngines\AndroidPlayer\Variations\mono\Release\Classes\classes.jar
+//
+//   Copy or symlink it to:
+//     03_unity_android_quest/AndroidPlugin/libs/unity-classes.jar
+//
+// Step 2 — Move / copy the Java source files:
+//   The .java files currently live directly in AndroidPlugin/ (alongside this
+//   build script). Android Gradle expects them under the standard source set:
+//     src/main/java/com/bleref/unity/
+//
+//   Move or copy these files:
+//     BLEAndroidPlugin.java  →  src/main/java/com/bleref/unity/
+//     BLECommandQueue.java   →  src/main/java/com/bleref/unity/
+//     BLEConnection.java     →  src/main/java/com/bleref/unity/
+//     BLEDeviceInfo.java     →  src/main/java/com/bleref/unity/
+//     BLEDFU.java            →  src/main/java/com/bleref/unity/
+//     BLEGatt.java           →  src/main/java/com/bleref/unity/
+//     BLEMTU.java            →  src/main/java/com/bleref/unity/
+//     BLEPairing.java        →  src/main/java/com/bleref/unity/
+//     BLEPeripheral.java     →  src/main/java/com/bleref/unity/
+//     BLERSSIDistance.java   →  src/main/java/com/bleref/unity/
+//     BLEScan.java           →  src/main/java/com/bleref/unity/
+//     MuseEEG.java           →  src/main/java/com/bleref/unity/
+//
+// Step 3 — Build:
+//   ./gradlew assembleRelease
+//
+// OUTPUT
+// ------
+//   build/outputs/aar/BLEAndroidPlugin-release.aar
+//
+// DEPLOYMENT TO UNITY
+// -------------------
+//   Copy the .aar to your Unity project:
+//     Assets/Plugins/Android/BLEAndroidPlugin-release.aar
+//   Unity's build pipeline will bundle it automatically when you build for
+//   Android (File → Build Settings → Android → Build).
+//   The AndroidManifest.xml in this module will be merged into the
+//   Unity-generated manifest at build time.
+// =============================================================================
+
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.bleref.unity'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 26      // Android 8.0 — BLE GATT APIs stable; covers Quest 1/2/3/Pro
+        targetSdk 33   // Android 13 — aligns with Meta OS on Quest 2/3
+    }
+
+    buildTypes {
+        release {
+            // Proguard/R8 minification is disabled intentionally.
+            // The plugin is called from Unity via reflection-like string-based
+            // dispatch (UnitySendMessage reverse: Unity calls Java by method name).
+            // Minification would rename/remove methods and break the bridge.
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    // unity-classes.jar — provides UnityPlayer.UnitySendMessage
+    //
+    // WHY compileOnly?
+    //   At runtime inside a Unity Android build, the Unity engine itself
+    //   provides UnityPlayer on the classpath. If we bundled classes.jar
+    //   inside the .aar (using 'implementation'), Unity's build would see
+    //   two copies of UnityPlayer and fail with a duplicate-class error.
+    //   'compileOnly' makes the jar visible to javac during compilation but
+    //   excludes it from the packaged .aar — exactly what we need.
+    //
+    // See Step 1 in the header comment for where to obtain this jar.
+    compileOnly files('libs/unity-classes.jar')
+
+    // AndroidX Core — provides ActivityCompat, ContextCompat, and related
+    // helpers used by the BLE permission-request and adapter-check code.
+    // This IS bundled in the .aar (implementation scope) because Unity's
+    // runtime does not supply it.
+    implementation 'androidx.core:core:1.12.0'
+}

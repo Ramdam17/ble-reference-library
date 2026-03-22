@@ -1,0 +1,20 @@
+# Source directory placeholder.
+#
+# Move (or copy) all .java files from AndroidPlugin/ into this directory
+# before running ./gradlew assembleRelease.
+#
+# Files to move:
+#   BLEAndroidPlugin.java
+#   BLECommandQueue.java
+#   BLEConnection.java
+#   BLEDeviceInfo.java
+#   BLEDFU.java
+#   BLEGatt.java
+#   BLEMTU.java
+#   BLEPairing.java
+#   BLEPeripheral.java
+#   BLERSSIDistance.java
+#   BLEScan.java
+#   MuseEEG.java
+#
+# See build.gradle (Step 2) for the full explanation.
