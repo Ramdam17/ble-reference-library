@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BLE Reference — Web Bluetooth TestApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab { padding: 8px 16px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; }
+    .tab.active { background: #0066cc; color: white; border-color: #0066cc; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    button.run { padding: 10px 20px; font-size: 16px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    #polar-log, #muse-log { height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; background: #f4f4f4; padding: 8px; border-radius: 4px; margin-top: 12px; }
+    canvas { max-width: 100%; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>BLE Reference — Web Bluetooth Integration Tests</h1>
+  <p>Open in Chrome via <code>npx serve .</code> (http://localhost:3000). Requires Bluetooth permission.</p>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('polar')">Polar H10 (ECG)</div>
+    <div class="tab" onclick="showTab('muse')">Muse 2 (EEG)</div>
+  </div>
+
+  <div id="polar-panel" class="panel active">
+    <button class="run" onclick="window.runPolar()">&#9654; Run Polar H10 Test</button>
+    <button onclick="window.exportPolarPNG()" style="margin-left:8px">Export PNG</button>
+    <div id="polar-log"></div>
+    <canvas id="polar-chart" height="200"></canvas>
+  </div>
+
+  <div id="muse-panel" class="panel">
+    <button class="run" onclick="window.runMuse()">&#9654; Run Muse 2 Test</button>
+    <button onclick="window.exportMusePNG()" style="margin-left:8px">Export PNG</button>
+    <div id="muse-log"></div>
+    <canvas id="muse-chart" height="200"></canvas>
+  </div>
+
+  <script type="module" src="./polar-runner.js"></script>
+  <script type="module" src="./muse-runner.js"></script>
+  <script>
+    function showTab(name) {
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['polar','muse'][i] === name));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(name + '-panel').classList.add('active');
+    }
+    window.exportPolarPNG = function() {
+      const a = document.createElement('a');
+      a.href = document.getElementById('polar-chart').toDataURL('image/png');
+      a.download = 'ecg_plot_' + new Date().toISOString().replace(/[:.]/g, '-') + '.png';
+      a.click();
+    };
+    window.exportMusePNG = function() {
+      const a = document.createElement('a');
+      a.href = document.getElementById('muse-chart').toDataURL('image/png');
+      a.download = 'eeg_plot_' + new Date().toISOString().replace(/[:.]/g, '-') + '.png';
+      a.click();
+    };
+  </script>
+</body>
+</html>
