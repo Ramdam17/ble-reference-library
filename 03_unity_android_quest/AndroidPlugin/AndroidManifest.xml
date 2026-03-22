@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ─────────────────────────────────────────────────────────────────────────────
+  BLE Reference Library
+  Module  : AndroidManifest.xml — BLE Permission Declarations
+  Platform: Android / Unity Plugin
+  Sprint  : Sprint 73
+  Phase   : Phase 04 — Unity / Android / Quest
+
+  Purpose : Declare all Bluetooth permissions and hardware features required
+            by the BLE reference library plugin. This manifest is merged
+            into the Unity-generated AndroidManifest.xml at build time by
+            the Android Gradle build system.
+
+  Placement in Unity:
+            Place this file at:
+              Assets/Plugins/Android/AndroidManifest.xml
+            Unity's build pipeline will merge its contents with the base
+            manifest. If you have other plugins also supplying a manifest,
+            use Android's manifest merger rules (<merge>, <replace>, etc.)
+            or consolidate into a single authoritative manifest.
+
+  API Level Targeting:
+            This manifest targets Android 12+ (API 31) as the primary
+            runtime while maintaining backwards compatibility to API 23
+            (Android 6.0) for older devices. maxSdkVersion attributes are
+            used to restrict legacy permissions to the API levels where
+            they are still meaningful.
+
+  Key References:
+            https://developer.android.com/guide/topics/connectivity/bluetooth/permissions
+            https://developer.android.com/reference/android/Manifest.permission#BLUETOOTH_SCAN
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bleref.unity">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISSION GROUP 1: Legacy BLE permissions (API ≤ 30 / Android ≤ 11)
+         ═══════════════════════════════════════════════════════════════════════
+
+         On Android 11 and below, Bluetooth access is gated by two install-time
+         permissions (BLUETOOTH, BLUETOOTH_ADMIN) plus a runtime location
+         permission (ACCESS_FINE_LOCATION).
+
+         WHY LOCATION?
+         Before API 31, Android treated BLE scanning as a location-revealing
+         capability: nearby BLE beacons could be used to triangulate a user's
+         physical position. Therefore the OS required apps to justify their
+         scan usage with a location permission.
+
+         maxSdkVersion="30" ensures these permissions are NOT requested on
+         Android 12+ devices, where the new BLUETOOTH_SCAN / BLUETOOTH_CONNECT
+         model supersedes them entirely.
+    -->
+
+    <!-- BLUETOOTH: allows the app to connect to Bluetooth devices.
+         Install-time permission — no runtime prompt required on API ≤ 30. -->
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+
+    <!-- BLUETOOTH_ADMIN: allows the app to initiate device discovery and
+         manipulate Bluetooth settings. Required for scanning on API ≤ 30.
+         Install-time permission — no runtime prompt required on API ≤ 30. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+
+    <!-- ACCESS_FINE_LOCATION: required to start BLE scans on API ≤ 30.
+         This is a RUNTIME permission — the user must explicitly grant it.
+         maxSdkVersion="30" prevents this from being requested on Android 12+,
+         where BLUETOOTH_SCAN replaces the need for location access. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- ACCESS_COARSE_LOCATION: fallback for devices where fine location is
+         declined. Some BLE-only use cases can function with coarse location.
+         In practice, request FINE first; COARSE is here as a declaration.
+         maxSdkVersion="30" for the same reason as FINE above. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="30" />
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISSION GROUP 2: Modern BLE permissions (API 31+ / Android 12+)
+         ═══════════════════════════════════════════════════════════════════════
+
+         Android 12 (API 31) introduced purpose-specific Bluetooth permissions.
+         This removes the location dependency for apps that do NOT use BLE for
+         location inference — which is the case for this reference library.
+
+         Both permissions below are RUNTIME permissions: the user will see a
+         system dialog asking them to grant each one. The dialog text is
+         determined by Android based on the permission name, not the app.
+
+         tools:targetApi="s" tells the manifest linter that these attributes
+         are intentional for API "s" (API 31 = Android 12, codename "S").
+         Without this, the linter may warn about unknown attributes on
+         lower API compileSdkVersions.
+    -->
+
+    <!-- BLUETOOTH_SCAN: required to start and stop BLE device scans,
+         and to read discovered device names and addresses.
+
+         usesPermissionFlags="neverForLocation":
+           This flag explicitly declares that this app does NOT use BLE scan
+           results to infer the user's physical location. Without this flag,
+           Android 12+ may still require ACCESS_FINE_LOCATION alongside
+           BLUETOOTH_SCAN — defeating the purpose of the new model.
+
+           Declaring neverForLocation:
+             1. Removes the location permission requirement entirely on API 31+.
+             2. Shows a simpler permission dialog to the user ("Allow to find
+                nearby devices" rather than "Allow access to location").
+             3. Is enforced at runtime: if the app attempts to access device
+                location-related scan data (e.g., physical BLE address on some
+                APIs), the OS will throw a SecurityException.
+
+           For this reference library, we only use BLE for device connectivity
+           (ECG/EEG data streaming), never for location. neverForLocation is
+           therefore both accurate and required. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <!-- BLUETOOTH_CONNECT: required to connect to a BLE peripheral,
+         read its services/characteristics, and send/receive data.
+         Also required to read the device's Bluetooth name (on API 31+,
+         getBluetoothName() / device.getName() require BLUETOOTH_CONNECT).
+
+         Note: BLUETOOTH_SCAN and BLUETOOTH_CONNECT are independent.
+         An app can scan without connecting (e.g., beacon detectors) and
+         can connect without scanning (e.g., connecting to a known address).
+         Both are needed for the full BLE workflow. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"
+        tools:targetApi="s" />
+
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         HARDWARE FEATURE: Bluetooth LE
+         ═══════════════════════════════════════════════════════════════════════
+
+         Declares that this application requires BLE hardware to function.
+         Setting android:required="true" means:
+           - Google Play will NOT show this app to devices without BLE.
+           - Quest devices have BLE hardware, so this is safe.
+
+         If you wanted to publish an app that degrades gracefully without BLE
+         (showing a "feature not available" message), set required="false" and
+         handle the absence in code with PackageManager.hasSystemFeature().
+         BLEAndroidPlugin.initialize() already does this check defensively.
+    -->
+    <uses-feature android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+</manifest>
