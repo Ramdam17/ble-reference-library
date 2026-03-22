@@ -558,7 +558,7 @@ sprints:
   - id: 37
     phase: phase_03
     name: "BLEScanner — Web Bluetooth requestDevice wrapper"
-    files: ["07_javascript_node/01_scan.js", "08_javascript_web/01_scan.js"]
+    files: ["08_javascript_web/01_scan.js"]
     branch: "feature/phase03-sprint37-passive-scan"
     depends_on: []
     status: not_started
@@ -569,7 +569,7 @@ sprints:
   - id: 38
     phase: phase_03
     name: "ScanFilter — RequestDeviceOptions builders"
-    files: ["07_javascript_node/02_scan_filtered.js", "08_javascript_web/02_scan_filtered.js"]
+    files: ["08_javascript_web/02_scan_filtered.js"]
     branch: "feature/phase03-sprint38-filtered-scan"
     depends_on: [37]
     status: not_started
@@ -580,7 +580,7 @@ sprints:
   - id: 39
     phase: phase_03
     name: "BLEConnector — GATT connect/disconnect lifecycle"
-    files: ["07_javascript_node/03_connection.js", "08_javascript_web/03_connection.js"]
+    files: ["08_javascript_web/03_connection.js"]
     branch: "feature/phase03-sprint39-connection"
     depends_on: [38]
     status: not_started
@@ -591,7 +591,7 @@ sprints:
   - id: 40
     phase: phase_03
     name: "BLEServiceDiscoverer — getPrimaryServices + getCharacteristics"
-    files: ["07_javascript_node/04_services_characteristics.js", "08_javascript_web/04_services_characteristics.js"]
+    files: ["08_javascript_web/04_services_characteristics.js"]
     branch: "feature/phase03-sprint40-services-discovery"
     depends_on: [39]
     status: not_started
@@ -602,7 +602,7 @@ sprints:
   - id: 41
     phase: phase_03
     name: "BLEReadWriter — readValue / writeValue"
-    files: ["07_javascript_node/05_read_write.js", "08_javascript_web/05_read_write.js"]
+    files: ["08_javascript_web/05_read_write.js"]
     branch: "feature/phase03-sprint41-read-write"
     depends_on: [40]
     status: not_started
@@ -613,7 +613,7 @@ sprints:
   - id: 42
     phase: phase_03
     name: "BLENotificationSubscriber — startNotifications + events"
-    files: ["07_javascript_node/06_notifications.js", "08_javascript_web/06_notifications.js"]
+    files: ["08_javascript_web/06_notifications.js"]
     branch: "feature/phase03-sprint42-notifications"
     depends_on: [41]
     status: not_started
@@ -624,7 +624,7 @@ sprints:
   - id: 43
     phase: phase_03
     name: "BLEAdvertisementScanner — requestLEScan (experimental)"
-    files: ["07_javascript_node/07_scan_without_connect.js", "08_javascript_web/07_scan_without_connect.js"]
+    files: ["08_javascript_web/07_scan_without_connect.js"]
     branch: "feature/phase03-sprint43-adv-data"
     depends_on: [37]
     status: not_started
@@ -635,7 +635,7 @@ sprints:
   - id: 44
     phase: phase_03
     name: "BLEBattery — Battery Service 0x180F"
-    files: ["07_javascript_node/08_battery.js", "08_javascript_web/08_battery.js"]
+    files: ["08_javascript_web/08_battery.js"]
     branch: "feature/phase03-sprint44-battery"
     depends_on: [41]
     status: not_started
@@ -647,7 +647,7 @@ sprints:
   - id: 45
     phase: phase_03
     name: "BLEDeviceInfo — Device Information Service 0x180A"
-    files: ["07_javascript_node/09_device_info.js", "08_javascript_web/09_device_info.js"]
+    files: ["08_javascript_web/09_device_info.js"]
     branch: "feature/phase03-sprint45-device-info"
     depends_on: [40, 41]
     status: not_started
@@ -661,7 +661,7 @@ sprints:
   - id: 46
     phase: phase_03
     name: "HeartRateParser + PolarEcgParser"
-    files: ["07_javascript_node/09_heartrate_example.js", "08_javascript_web/09_heartrate_example.js"]
+    files: ["08_javascript_web/09_heartrate_example.js"]
     branch: "feature/phase03-sprint46-heartrate"
     depends_on: [42, 44]
     status: not_started
@@ -672,7 +672,7 @@ sprints:
   - id: 47
     phase: phase_03
     name: "MuseEegParser — 12-bit packed samples"
-    files: ["07_javascript_node/10_muse_example.js", "08_javascript_web/10_muse_example.js"]
+    files: ["08_javascript_web/10_muse_example.js"]
     branch: "feature/phase03-sprint47-muse"
     depends_on: [42]
     status: not_started
@@ -687,7 +687,7 @@ sprints:
   - id: 48
     phase: phase_03
     name: "BLEError hierarchy + withBLETimeout"
-    files: ["07_javascript_node/11_error_handling.js", "08_javascript_web/11_error_handling.js"]
+    files: ["08_javascript_web/11_error_handling.js"]
     branch: "feature/phase03-sprint48-errors"
     depends_on: [39]
     status: not_started
@@ -698,7 +698,7 @@ sprints:
   - id: 49
     phase: phase_03
     name: "BLEMTU — informational stub (browser-managed)"
-    files: ["07_javascript_node/12_mtu.js", "08_javascript_web/12_mtu.js"]
+    files: ["08_javascript_web/12_mtu.js"]
     branch: "feature/phase03-sprint49-mtu"
     depends_on: [39]
     status: not_started
@@ -709,7 +709,7 @@ sprints:
   - id: 50
     phase: phase_03
     name: "BLEPairing — stub (OS/browser-automatic)"
-    files: ["07_javascript_node/13_bonding_pairing.js", "08_javascript_web/13_bonding_pairing.js"]
+    files: ["08_javascript_web/13_bonding_pairing.js"]
     branch: "feature/phase03-sprint50-pairing"
     depends_on: [39]
     status: not_started
@@ -720,7 +720,7 @@ sprints:
   - id: 51
     phase: phase_03
     name: "BLEPeripheral — stub (not available in Web BT)"
-    files: ["07_javascript_node/14_peripheral_mode.js", "08_javascript_web/14_peripheral_mode.js"]
+    files: ["08_javascript_web/14_peripheral_mode.js"]
     branch: "feature/phase03-sprint51-peripheral"
     depends_on: [39]
     status: not_started
@@ -731,7 +731,7 @@ sprints:
   - id: 52
     phase: phase_03
     name: "BLERSSIDistance — post-connection RSSI estimation"
-    files: ["07_javascript_node/15_rssi_distance.js", "08_javascript_web/15_rssi_distance.js"]
+    files: ["08_javascript_web/15_rssi_distance.js"]
     branch: "feature/phase03-sprint52-rssi"
     depends_on: [37]
     status: not_started
@@ -742,7 +742,7 @@ sprints:
   - id: 53
     phase: phase_03
     name: "BLECommandQueue — serial Promise queue"
-    files: ["07_javascript_node/16_command_queue.js", "08_javascript_web/16_command_queue.js"]
+    files: ["08_javascript_web/16_command_queue.js"]
     branch: "feature/phase03-sprint53-command-queue"
     depends_on: [41]
     status: not_started
@@ -753,7 +753,7 @@ sprints:
   - id: 54
     phase: phase_03
     name: "OTA DFU — chunked firmware transfer via Web Bluetooth"
-    files: ["07_javascript_node/17_ota_dfu.js", "08_javascript_web/17_ota_dfu.js"]
+    files: ["08_javascript_web/17_ota_dfu.js"]
     branch: "feature/phase03-sprint54-dfu"
     depends_on: [41, 48, 53]
     status: not_started

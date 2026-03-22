@@ -23,8 +23,7 @@ ble-library/
 ├── 04_unity_mac/               ← Phase 04 — Unity macOS
 ├── 05_unity_ios/               ← Phase 04 — Unity iOS
 ├── 06_cpp/                     ← Phase 05 — C++ / SimpleBLE
-├── 07_javascript_node/         ← Phase 03 — Node.js / noble
-├── 08_javascript_web/          ← Phase 03 — Web Bluetooth API
+├── 08_javascript_web/          ← Phase 03 — TypeScript / Web Bluetooth API
 └── 09_xcode_apple/             ← Phase 02 — Swift / CoreBluetooth
     ├── Shared/                 ← Common Swift code (iOS + macOS + iPadOS)
     ├── iOS/
@@ -34,16 +33,15 @@ ble-library/
 
 ## Covered Features (all platforms)
 
-01 Passive scan · 02 Filtered scan · 03 Connection lifecycle · 04 Services & characteristics · 05 Read & write · 06 Notifications & indications · 07 Scan without connection · 08 Battery level · 09 Heart Rate Monitor example · 10 Muse S EEG example · 11 Error handling & timeouts · 12 MTU negotiation · 13 Bonding & pairing · 14 Peripheral mode · 15 RSSI & distance · 16 Command queue · 17 OTA / DFU
+01 Passive scan · 02 Filtered scan · 03 Connection lifecycle · 04 Services & characteristics · 05 Read & write · 06 Notifications & indications · 07 Scan without connection · 08 Battery level · 09 Device Information Service · 10 Heart Rate + ECG (Polar H10) · 11 Muse EEG · 12 Error handling & timeouts · 13 MTU negotiation · 14 Bonding & pairing · 15 Peripheral mode · 16 RSSI & distance · 17 Command queue · 18 OTA / DFU
 
 ## Platform Stack Reference
 
 | Folder | Language | Library / Framework |
 |--------|----------|---------------------|
-| `01_python_bleak` | Python 3.10+ | Bleak 0.21+, bitstring, numpy |
-| `09_xcode_apple/Shared` | Swift 5.9+ | CoreBluetooth (native) |
-| `07_javascript_node` | JS (Node 18+) | @abandonware/noble, bleno |
-| `08_javascript_web` | JS (Browser) | Web Bluetooth API |
+| `01_python_bleak` | Python 3.12+ | Bleak 0.21+ |
+| `09_xcode_apple` | Swift 5.9+ | CoreBluetooth (native) |
+| `08_javascript_web` | TypeScript / Browser | Web Bluetooth API |
 | `02–05_unity_*` | C# / Unity 2022.3 LTS | IBLEPlugin + native plugins |
 | `06_cpp` | C++17 | SimpleBLE 0.7+ |
 
@@ -61,7 +59,7 @@ ble-library/
 |-------|-----------|---------|----------------------|
 | 01 | `01_python_bleak` | 01–17 | `phase_01` |
 | 02 | `09_xcode_apple` | 18–34 | `phase_02` |
-| 03 | `07_js_node` + `08_js_web` | 35–51 | `phase_03` |
+| 03 | `08_javascript_web` | 37–54 | `phase_03` |
 | 04 | `02–05_unity_*` | 52–85 | `phase_04` |
 | 05 | `06_cpp` | 86–102 | `phase_05` |
 

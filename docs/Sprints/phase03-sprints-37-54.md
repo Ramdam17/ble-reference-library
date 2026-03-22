@@ -1,12 +1,11 @@
-# Phase 03 — JavaScript (Node.js + Web Bluetooth)
-## Sprints 35–68
+# Phase 03 — Web Bluetooth (TypeScript)
+## Sprints 37–54
 
-> **Two sub-stacks covered in parallel:**
-> - `07_javascript_node/` — Node.js using `@abandonware/noble`
-> - `08_javascript_web/` — Browser using the Web Bluetooth API
+> **Stack:** `08_javascript_web/` — TypeScript library targeting the Web Bluetooth API (browser)
 >
-> **Each sprint produces two files:** one per sub-stack. Exceptions noted per sprint.
-> **Git base branch:** `develop`
+> **Note:** Node.js / noble was originally planned as a second sub-stack (`07_javascript_node/`). Descoped — only browser Web Bluetooth was implemented. See `docs/phase03-reference.md` for the authoritative reference.
+>
+> **Git base branch:** `main`
 
 ---
 

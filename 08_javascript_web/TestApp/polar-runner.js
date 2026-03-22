@@ -147,7 +147,7 @@ window.runPolar = async function () {
   try {
     // ── Step 1: Scan ───────────────────────────────────────────────────────
     log("Step 1: Scanning for Polar H10...");
-    const filter = ScanFilter.byName("Polar H10").withOptionalServices(
+    const filter = ScanFilter.byNamePrefix("Polar").withOptionalServices(
       HEART_RATE_SERVICE_UUID,
       "battery_service",
       "device_information",
