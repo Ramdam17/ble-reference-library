@@ -56,7 +56,12 @@ phases:
     folders: ["02_unity_editor", "03_unity_android_quest", "04_unity_mac", "05_unity_ios"]
     sprint_range: [55, 90]
     git_tag: "phase04-complete"
-    status: not_started
+    status: in_progress
+    phase_integration_gate:
+      status: pending
+      notes: "Sprints 55-56, 73-81 complete. Device test pending (Quest + Polar H10 ECG 30s + Muse 2 EEG 15s)."
+      polar_artifacts: null
+      muse_artifacts: null
 
   - id: phase_05
     name: "C++ / SimpleBLE"
@@ -769,22 +774,22 @@ sprints:
     phase: phase_04
     name: "C# Interface Definition"
     file: "02_unity_editor/Scripts/IBLEPlugin.cs"
-    branch: "feature/phase04-sprint55-cs-interface"
+    branch: "feature/phase04-sprint55-56-cs-foundation"
     depends_on: []
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["interface compiles in Unity 2022.3 LTS", "all 3 unit tests pass"]
 
   - id: 56
     phase: phase_04
     name: "BLEManager MonoBehaviour"
     file: "02_unity_editor/Scripts/BLEManager.cs"
-    branch: "feature/phase04-sprint56-ble-manager"
+    branch: "feature/phase04-sprint55-56-cs-foundation"
     depends_on: [55]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["callbacks on main thread guaranteed", "all 3 unit tests pass"]
 
   - id: 57
@@ -978,42 +983,43 @@ sprints:
     file: "03_unity_android_quest/AndroidPlugin/BLEAndroidPlugin.java"
     branch: "feature/phase04-sprint73-android-init"
     depends_on: [55]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
+    notes: "AndroidX deps removed — compatible with Unity direct .java compilation"
     acceptance_criteria: ["BLUETOOTH_SCAN with neverForLocation flag", "all 3 unit tests pass"]
 
   - id: 74
     phase: phase_04
     name: "Android/Quest — Scan"
     file: "03_unity_android_quest/AndroidPlugin/BLEScan.java"
-    branch: "feature/phase04-sprint74-android-scan"
+    branch: "feature/phase04-sprint74-76-android-core"
     depends_on: [73]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["ScanFilter used for UUID and name filters", "all 3 unit tests pass"]
 
   - id: 75
     phase: phase_04
     name: "Android/Quest — Connection Lifecycle"
     file: "03_unity_android_quest/AndroidPlugin/BLEConnection.java"
-    branch: "feature/phase04-sprint75-android-connection"
+    branch: "feature/phase04-sprint74-76-android-core"
     depends_on: [73]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["_intentionalDisconnect flag in place"]
 
   - id: 76
     phase: phase_04
     name: "Android/Quest — GATT Operations"
     file: "03_unity_android_quest/AndroidPlugin/BLEGatt.java"
-    branch: "feature/phase04-sprint76-android-gatt"
+    branch: "feature/phase04-sprint74-76-android-core"
     depends_on: [75]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["CCCD descriptor write documented as Android-specific requirement"]
 
 
@@ -1021,11 +1027,11 @@ sprints:
     phase: phase_04
     name: "Android/Quest — Device Information Service"
     file: "03_unity_android_quest/AndroidPlugin/BLEDeviceInfo.java"
-    branch: "feature/phase04-sprint77-device-info-android"
+    branch: "feature/phase04-sprint77-78-dis-muse"
     depends_on: [76]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     notes: "Java plugin layer for DIS — persistent device identification on Android/Quest."
     acceptance_criteria:
       - "DeviceInfo POJO with 5 nullable String fields"
@@ -1035,12 +1041,12 @@ sprints:
     phase: phase_04
     name: "Android/Quest — Muse EEG"
     file: "03_unity_android_quest/AndroidPlugin/MuseEEG.java"
-    branch: "feature/phase04-sprint78-android-muse"
+    branch: "feature/phase04-sprint77-78-dis-muse"
     depends_on: [76]
-    status: not_started
-    started_at: null
-    completed_at: null
-    notes: "Cross-validate against sprint 11 (Python) using muse_test_vectors.json"
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
+    notes: "Cross-validated via inline Python: scale=0.48828125 µV/LSB matches Phase 01/02/03"
     acceptance_criteria: ["Java parser output matches Python reference for all test vectors"]
 
   - id: 79
@@ -1050,11 +1056,11 @@ sprints:
       - "03_unity_android_quest/AndroidPlugin/BLEMTU.java"
       - "03_unity_android_quest/AndroidPlugin/BLEPairing.java"
       - "03_unity_android_quest/AndroidPlugin/BLEPeripheral.java"
-    branch: "feature/phase04-sprint79-android-advanced"
+    branch: "feature/phase04-sprint79-80-advanced"
     depends_on: [75]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["createBond() advantage over Python/JS documented"]
 
   - id: 80
@@ -1064,11 +1070,11 @@ sprints:
       - "03_unity_android_quest/AndroidPlugin/BLECommandQueue.java"
       - "03_unity_android_quest/AndroidPlugin/BLERSSIDistance.java"
       - "03_unity_android_quest/AndroidPlugin/BLEDFU.java"
-    branch: "feature/phase04-sprint80-android-advanced2"
+    branch: "feature/phase04-sprint79-80-advanced"
     depends_on: [76]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
     acceptance_criteria: ["LinkedBlockingQueue used for serial execution"]
 
   - id: 81
@@ -1077,9 +1083,10 @@ sprints:
     file: "03_unity_android_quest/README.md"
     branch: "feature/phase04-sprint81-quest-config"
     depends_on: [73]
-    status: not_started
-    started_at: null
-    completed_at: null
+    status: complete
+    started_at: "2026-03-22"
+    completed_at: "2026-03-22"
+    notes: "OculusPermissions.cs + TestApp (PolarTest, MuseTest, BLETestUI) included"
     acceptance_criteria: ["Quest idle/disconnect behavior documented", "all 2 unit tests pass"]
 
   - id: 82
