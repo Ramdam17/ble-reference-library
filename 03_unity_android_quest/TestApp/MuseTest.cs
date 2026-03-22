@@ -42,11 +42,10 @@
 //     [2..13] — 12 samples × 12-bit unsigned integers, packed big-endian
 //               (96 bits = 12 bytes for 12 samples per packet)
 //   At 256 Hz, 12 samples / packet → ~21.3 packets/s per channel.
-//   Conversion: raw_uint12 → µV using the Muse calibration scale:
-//     µV = (raw_uint12 - 2048) * (1.8 / 4096.0 / 51.0 * 1e6)
-//        ≈ raw_uint12 * 0.8666... - 1774.3...
-//   Simplified constant (matches muse-lsl SCALE_FACTOR_EEG):
-//     SCALE = 0.8666 µV/LSB (1.8 V ref / 4096 / gain 51 * 1e6)
+//   Conversion: raw_uint12 → µV using the cross-validated calibration constant:
+//     µV = (raw_uint12 - 2048) * 0.48828125
+//   SCALE = 0.48828125 µV/LSB (= 1000 / 2048), used in Phase 01/02/03.
+//   Note: muse-lsl uses 0.8666 (1.8V/4096/gain51×1e6); values differ by ~1.77×.
 //
 // Muse Control Commands:
 //   The control characteristic (273e0001-...) accepts ASCII command strings.
@@ -119,11 +118,13 @@ namespace BLEReference
         //   Amplifier gain        = 51×
         //   Unit conversion       = ×1e6 (V → µV)
         //
-        //   SCALE = (1.8 / 4096.0 / 51.0) * 1e6  ≈ 0.8666 µV/LSB
+        //   SCALE = 0.48828125 µV/LSB  (= 1000 / 2048)
         //
         // The mid-scale offset (2048 LSB → 0 µV) is applied during conversion.
-        // Reference: muse-lsl constants.py SCALE_FACTOR_EEG
-        private const float EEG_SCALE_UV_PER_LSB = 0.8666f;
+        // Cross-validated against Phase 01 (Python), Phase 02 (Swift), Phase 03 (TypeScript).
+        // Note: muse-lsl uses 0.8666 derived from hardware specs (1.8V/4096/gain51×1e6);
+        // this library uses 0.48828125, consistent with the Muse SDK calibration.
+        private const float EEG_SCALE_UV_PER_LSB = 0.48828125f;
         private const int   EEG_MID_SCALE         = 2048;
 
         // ══════════════════════════════════════════════════════════════════════
